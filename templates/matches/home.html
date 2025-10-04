@@ -5,35 +5,61 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="relative bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-2xl shadow-strong overflow-hidden mb-12">
-    <!-- Background Pattern -->
-    <div class="absolute inset-0 opacity-10">
+<div class="relative rounded-2xl shadow-strong overflow-hidden mb-12 min-h-[600px] md:min-h-[700px]">
+    <!-- Stadium Background Image -->
+    <div class="absolute inset-0">
+        <!-- Fallback gradient background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800"></div>
+        <!-- Stadium image -->
+        <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80" 
+             alt="Football Stadium" 
+             class="w-full h-full object-cover transform scale-105 hover:scale-100 transition-transform duration-1000 ease-out"
+             onerror="this.style.display='none'">
+        <!-- Dark overlay for better text readability -->
+        <div class="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/70"></div>
+        <!-- Subtle gradient overlay for depth -->
+        <div class="absolute inset-0 bg-gradient-to-t from-primary-900/20 via-transparent to-transparent"></div>
+    </div>
+    
+    <!-- Background Pattern Overlay -->
+    <div class="absolute inset-0 opacity-20">
         <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
     </div>
     
-    <div class="relative px-8 py-16 text-center text-white">
-        <div class="max-w-4xl mx-auto">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-accent-400 to-accent-600 rounded-2xl shadow-strong mb-6 animate-bounce-subtle">
-                <span class="text-3xl">⚽</span>
+    <div class="relative px-8 py-20 text-center text-white">
+        <div class="max-w-5xl mx-auto">
+            <!-- Football Icon with Enhanced Styling -->
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm rounded-3xl shadow-strong mb-8 animate-bounce-subtle border border-white/20 hover:animate-pulse">
+                <span class="text-4xl drop-shadow-lg hover:rotate-12 transition-transform duration-300">⚽</span>
             </div>
-            <h1 class="text-5xl md:text-7xl font-display font-bold mb-6 tracking-tight">
-                Wasl Village Premier League
-                <span class="block text-accent-300 text-3xl md:text-4xl mt-2">Season 3 - 2025</span>
+            
+            <!-- Main Title with Enhanced Typography -->
+            <h1 class="text-6xl md:text-8xl font-display font-bold mb-8 tracking-tight drop-shadow-2xl">
+                <span class="bg-gradient-to-r from-white via-accent-200 to-white bg-clip-text text-transparent">
+                    Wasl Village Premier League
+                </span>
+                <span class="block text-accent-300 text-4xl md:text-5xl mt-4 font-light drop-shadow-xl">
+                    Season 3 - 2025
+                </span>
             </h1>
-            <p class="text-xl md:text-2xl mb-10 opacity-90 max-w-2xl mx-auto leading-relaxed">
+            
+            <!-- Subtitle with Better Contrast -->
+            <p class="text-xl md:text-2xl mb-12 opacity-95 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
                 Experience the thrill of professional football with live standings, comprehensive statistics, and real-time match updates.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            
+            <!-- Enhanced Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
                 <a href="{% url 'matches:table' %}" 
-                   class="bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-primary-50 transition-all duration-300 shadow-medium hover:shadow-strong hover:scale-105 flex items-center justify-center group">
-                    <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="bg-white/95 backdrop-blur-sm text-primary-700 px-10 py-5 rounded-2xl font-semibold hover:bg-white transition-all duration-300 shadow-strong hover:shadow-xl hover:scale-105 hover:-translate-y-1 flex items-center justify-center group border border-white/20">
+                    <svg class="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
                     View League Table
                 </a>
                 <a href="{% url 'matches:fixtures' %}" 
-                   class="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-medium hover:shadow-strong hover:scale-105 flex items-center justify-center group">
-                    <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="bg-accent-500/90 backdrop-blur-sm hover:bg-accent-500 text-white px-10 py-5 rounded-2xl font-semibold transition-all duration-300 shadow-strong hover:shadow-xl hover:scale-105 hover:-translate-y-1 flex items-center justify-center group border border-accent-400/30">
+                    <svg class="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                     View Fixtures

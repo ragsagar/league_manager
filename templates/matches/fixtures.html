@@ -72,7 +72,7 @@
                                      src="{{ fixture.team1.logo.url }}" 
                                      alt="{{ fixture.team1.name }}">
                             {% else %}
-                                <div class="h-12 w-12 bg-soccer-green rounded-full mx-auto flex items-center justify-center">
+                                <div class="h-12 w-12 bg-primary-500 rounded-full mx-auto flex items-center justify-center">
                                     <span class="text-white font-bold">{{ fixture.team1.name|first }}</span>
                                 </div>
                             {% endif %}
@@ -83,8 +83,8 @@
                     <!-- Match Info -->
                     <div class="text-center">
                         {% if fixture.result %}
-                            <div class="text-3xl font-bold text-soccer-green mb-2">
-                                {{ fixture.result.home_goals }} - {{ fixture.result.away_goals }}
+                            <div class="text-3xl font-bold text-primary-500 mb-2">
+                                {{ fixture.result.team1_goals }} - {{ fixture.result.team2_goals }}
                             </div>
                             {% if fixture.result.man_of_match %}
                                 <div class="text-sm text-gold">
@@ -109,7 +109,7 @@
                                      src="{{ fixture.team2.logo.url }}" 
                                      alt="{{ fixture.team2.name }}">
                             {% else %}
-                                <div class="h-12 w-12 bg-soccer-green rounded-full mx-auto flex items-center justify-center">
+                                <div class="h-12 w-12 bg-primary-500 rounded-full mx-auto flex items-center justify-center">
                                     <span class="text-white font-bold">{{ fixture.team2.name|first }}</span>
                                 </div>
                             {% endif %}
@@ -133,6 +133,10 @@
                                    class="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-600 transition-colors">
                                     View Details
                                 </a>
+                                <button onclick="toggleMatchDetails('{{ fixture.id }}')" 
+                                        class="bg-gray-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-gray-600 transition-colors">
+                                    <span id="toggle-text-{{ fixture.id }}">Show Details</span>
+                                </button>
                             {% else %}
                                 <a href="/admin/matches/matchresult/add/?fixture={{ fixture.id }}" 
                                    class="bg-primary-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-primary-600 transition-colors">
@@ -141,6 +145,83 @@
                             {% endif %}
                         </div>
                     </div>
+                    
+                    <!-- Match Details (Collapsible) -->
+                    {% if fixture.result %}
+                        <div id="match-details-{{ fixture.id }}" class="hidden mt-4 pt-4 border-t border-gray-200">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Goals -->
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                        <span class="text-primary-500 mr-2">⚽</span>
+                                        Goals
+                                    </h4>
+                                    {% if fixture.result.goals.all %}
+                                        <div class="space-y-2">
+                                            {% for goal in fixture.result.goals.all %}
+                                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span class="text-primary-500 font-bold">{{ goal.minute }}'</span>
+                                                        <span class="font-medium">{{ goal.scorer.first_name }} {{ goal.scorer.last_name }}</span>
+                                                        <span class="text-gray-500">({{ goal.scorer.club.name }})</span>
+                                                    </div>
+                                                    <div class="flex space-x-1">
+                                                        {% if goal.penalty %}
+                                                            <span class="bg-blue-500 text-white text-xs px-1 py-0.5 rounded">P</span>
+                                                        {% endif %}
+                                                        {% if goal.own_goal %}
+                                                            <span class="bg-red-500 text-white text-xs px-1 py-0.5 rounded">OG</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <p class="text-gray-500 text-sm">No goals recorded</p>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Bookings -->
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                        <span class="text-yellow-500 mr-2">🟨</span>
+                                        Bookings
+                                    </h4>
+                                    {% if fixture.result.bookings.all %}
+                                        <div class="space-y-2">
+                                            {% for booking in fixture.result.bookings.all %}
+                                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span class="text-gray-600">{{ booking.minute }}'</span>
+                                                        <span class="font-medium">{{ booking.player.first_name }} {{ booking.player.last_name }}</span>
+                                                        <span class="text-gray-500">({{ booking.player.club.name }})</span>
+                                                    </div>
+                                                    <span class="{% if booking.card_type == 'yellow' %}bg-yellow-500{% else %}bg-red-500{% endif %} text-white text-xs px-2 py-0.5 rounded">
+                                                        {{ booking.get_card_type_display|upper }}
+                                                    </span>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <p class="text-gray-500 text-sm">No bookings recorded</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Man of the Match -->
+                            {% if fixture.result.man_of_match %}
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <div class="flex items-center justify-center">
+                                        <span class="text-yellow-500 mr-2">⭐</span>
+                                        <span class="text-sm font-medium text-gray-800">
+                                            Man of the Match: {{ fixture.result.man_of_match.first_name }} {{ fixture.result.man_of_match.last_name }}
+                                        </span>
+                                        <span class="text-gray-500 ml-2">({{ fixture.result.man_of_match.club.name }})</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -204,4 +285,19 @@
         </a>
     </div>
 {% endif %}
+
+<script>
+function toggleMatchDetails(fixtureId) {
+    const detailsDiv = document.getElementById('match-details-' + fixtureId);
+    const toggleText = document.getElementById('toggle-text-' + fixtureId);
+    
+    if (detailsDiv.classList.contains('hidden')) {
+        detailsDiv.classList.remove('hidden');
+        toggleText.textContent = 'Hide Details';
+    } else {
+        detailsDiv.classList.add('hidden');
+        toggleText.textContent = 'Show Details';
+    }
+}
+</script>
 {% endblock %}

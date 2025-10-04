@@ -174,12 +174,12 @@ class MatchDetailView(DetailView):
         goals_against = 0
         player_stats = {}
         
-        if team == match_result.fixture.home_team:
-            goals_for = match_result.home_goals
-            goals_against = match_result.away_goals
+        if team == match_result.fixture.team1:
+            goals_for = match_result.team1_goals
+            goals_against = match_result.team2_goals
         else:
-            goals_for = match_result.away_goals
-            goals_against = match_result.home_goals
+            goals_for = match_result.team2_goals
+            goals_against = match_result.team1_goals
         
         # Get player stats (goals, cards)
         team_players = Player.objects.filter(club=team)
