@@ -133,7 +133,7 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f'Set {captain_manager.first_name} as captain and manager for {club.name}')
             )
 
-        self.stdout.write(f'\nCreated {len(teams_data)} clubs with {sum(len(team['players']) for team in teams_data)} total players')
+        self.stdout.write(f'\nCreated {len(teams_data)} clubs with {sum(len(team["players"]) for team in teams_data)} total players')
 
     def create_fixtures(self):
         """Create fixtures based on the schedule from the image"""
