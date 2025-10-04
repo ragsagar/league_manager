@@ -1,0 +1,1279 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Dynamic Match Result Entry - League Manager{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">🎯 Dynamic Match Result Entry</h1>
+            <div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ fixture.team1.name }} vs {{ fixture.team2.name }}</h2>
+                <p class="text-gray-600">{{ fixture.date|date:"F j, Y \a\t g:i A" }} - {{ fixture.venue }}</p>
+            </div>
+        </div>
+
+        <!-- Django Messages -->
+        {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <strong>{{ message.tags|title }}:</strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Form Errors -->
+        {% if form.errors or form.non_field_errors %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <h4 class="text-red-800 font-bold mb-2">⚠️ Please fix the following errors:</h4>
+                {% if form.non_field_errors %}
+                    <ul class="text-red-700 mb-0">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="row mt-3">
+                    {% for field, errors in form.errors.items %}
+                        <div class="col-md-6 mb-2">
+                            <strong class="text-red-800">{{ field|capfirst }}:</strong>
+                            <ul class="text-red-700 mb-0">
+                                {% for error in errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <form method="post" id="dynamic-result-form" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <!-- Match Score Section -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center justify-center">
+                        <span class="mr-3">⚽</span>
+                        Match Score Entry
+                        <span class="mr-3">⚽</span>
+                    </h3>
+                </div>
+
+                <div class="row justify-content-center align-items-center">
+                    <!-- Team 1 Score -->
+                    <div class="col-md-4 text-center">
+                        <div class="team-score-section">
+                            <div class="team-logo mb-4">
+                                {% if fixture.team1.logo %}
+                                    <img class="h-20 w-20 mx-auto rounded-full object-cover shadow-md" 
+                                         src="{{ fixture.team1.logo.url }}" 
+                                         alt="{{ fixture.team1.name }}">
+                                {% else %}
+                                    <div class="h-20 w-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mx-auto flex items-center justify-center shadow-md">
+                                        <span class="text-white text-3xl font-bold">{{ fixture.team1.name|first }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <h4 class="text-xl font-bold text-gray-800 mb-3">{{ fixture.team1.name }}</h4>
+                            <div class="score-input-container">
+                                {{ form.team1_goals }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VS Divider -->
+                    <div class="col-md-2 text-center">
+                        <div class="vs-divider">
+                            <span class="text-4xl font-bold text-gray-400">VS</span>
+                        </div>
+                    </div>
+
+                    <!-- Team 2 Score -->
+                    <div class="col-md-4 text-center">
+                        <div class="team-score-section">
+                            <div class="team-logo mb-4">
+                                {% if fixture.team2.logo %}
+                                    <img class="h-20 w-20 mx-auto rounded-full object-cover shadow-md" 
+                                         src="{{ fixture.team2.logo.url }}" 
+                                         alt="{{ fixture.team2.name }}">
+                                {% else %}
+                                    <div class="h-20 w-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full mx-auto flex items-center justify-center shadow-md">
+                                        <span class="text-white text-3xl font-bold">{{ fixture.team2.name|first }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <h4 class="text-xl font-bold text-gray-800 mb-3">{{ fixture.team2.name }}</h4>
+                            <div class="score-input-container">
+                                {{ form.team2_goals }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Man of the Match -->
+                <div class="row mt-6">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <h5 class="mb-3 font-bold text-gray-700">🏆 Man of the Match</h5>
+                            <div class="max-w-md mx-auto">
+                                {{ form.man_of_match }}
+                                {% if form.man_of_match.errors %}
+                                    <div class="text-red-600 text-sm mt-1">
+                                        {% for error in form.man_of_match.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goals Section -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center justify-center">
+                        <span class="mr-3">🥅</span>
+                        Goals & Assists
+                        <span class="mr-3">🥅</span>
+                    </h3>
+                    <p class="text-gray-600 mt-2">Click "Add Goal" to create goal entries for this match</p>
+                </div>
+
+                <!-- Existing Goals Formsets -->
+                <div id="existing-goals-container">
+                    {% for goal_form in goal_formset %}
+                        {% if goal_form.instance.pk %}
+                            {{ goal_form.DELETE }}
+                            {{ goal_form.id }}
+                        {% endif %}
+                        {{ goal_form.match.as_hidden }}
+                        
+                        <div class="goal-form bg-gray-50 rounded-lg p-4 mb-4 border-2 border-dashed border-gray-300">
+                            <div class="flex items-center justify-between mb-3">
+                                <h5 class="font-bold text-gray-700 flex items-center">
+                                    <span class="mr-2">⚽</span>
+                                    Goal {{ forloop.counter }}
+                                </h5>
+                                {% if goal_form.instance.pk %}
+                                <button type="button" class="remove-goal text-red-600 hover:text-red-700 font-bold">
+                                    ✕ Remove
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label font-semibold">Scorer</label>
+                                    {{ goal_form.scorer }}
+                                    {% if goal_form.scorer.errors %}
+                                        <div class="text-red-600 text-sm mt-1">
+                                            {% for error in goal_form.scorer.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label font-semibold">Assist</label>
+                                    {{ goal_form.assist }}
+                                    {% if goal_form.assist.errors %}
+                                        <div class="text-red-600 text-sm mt-1">
+                                            {% for error in goal_form.assist.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label font-semibold">Minute</label>
+                                    {{ goal_form.minute }}
+                                    {% if goal_form.minute.errors %}
+                                        <div class="text-red-600 text-sm mt-1">
+                                            {% for error in goal_form.minute.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                                    <label class="form-label font-semibold">Type</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                {{ goal_form.own_goal }}
+                                                <label class="form-check-label font-semibold text-orange-600">
+                                                    Own Goal
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                {{ goal_form.penalty }}
+                                                <label class="form-check-label font-semibold text-purple-600">
+                                                    Penalty
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Dynamic Goals Container -->
+                <div id="dynamic-goals-container">
+                    <!-- New goals will be added here -->
+                </div>
+
+                {{ goal_formset.management_form }}
+
+                <div class="text-center mt-6">
+                    <button type="button" id="add-goal-btn" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg transition duration-200 flex items-center mx-auto">
+                        <span class="mr-2">+</span>
+                        Add Goal
+                    </button>
+                </div>
+
+                <!-- Goals Formset Errors -->
+                {% if goal_formset.errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                        <h4 class="text-red-800 font-bold mb-2">⚠️ Goal Errors:</h4>
+                        {% for form in goal_formset %}
+                            {% if form.errors %}
+                                <div class="mb-2">
+                                    <strong class="text-red-800">Goal {{ forloop.counter }}:</strong>
+                                    {% for field, errors in form.errors.items %}
+                                        <div class="text-red-700">
+                                            {{ field|capfirst }}: {{ errors|join:", " }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Bookings Section -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center justify-center">
+                        <span class="mr-3">🟨</span>
+                        Cards & Bookings
+                        <span class="mr-3">🟨</span>
+                    </h3>
+                    <p class="text-gray-600 mt-2">Track yellow cards, red cards, and disciplinary actions</p>
+                </div>
+
+                <!-- Existing Bookings Formsets -->
+                <div id="existing-bookings-container">
+                    {% for booking_form in booking_formset %}
+                        {% if booking_form.instance.pk %}
+                            {{ booking_form.DELETE }}
+                            {{ booking_form.id }}
+                        {% endif %}
+                        {{ booking_form.match.as_hidden }}
+                        
+                        <div class="booking-form bg-gray-50 rounded-lg p-4 mb-4 border-2 border-dashed border-gray-300">
+                            <div class="flex items-center justify-between mb-3">
+                                <h5 class="font-bold text-gray-700 flex items-center">
+                                    <span class="mr-2">🟨</span>
+                                    Booking {{ forloop.counter }}
+                                </h5>
+                                {% if booking_form.instance.pk %}
+                                <button type="button" class="remove-booking text-red-600 hover:text-red-700 font-bold">
+                                    ✕ Remove
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label font-semibold">Player</label>
+                                    {{ booking_form.player }}
+                                    {% if booking_form.player.errors %}
+                                        <div class="text-red-600 text-sm mt-1">
+                                            {% for error in booking_form.player.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label font-semibold">Card Type</label>
+                                    {{ booking_form.card_type }}
+                                    {% if booking_form.card_type.errors %}
+                                        <div class="text-red-600 text-sm mt-1">
+                                            {% for error in booking_form.card_type.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label font-semibold">Minute</label>
+                                    {{ booking_form.minute }}
+                                    {% if booking_form.minute.errors %}
+                                        <div class="text-red-600 text-sm mt-1">
+                                            {% for error in booking_form.minute.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Dynamic Bookings Container -->
+                <div id="dynamic-bookings-container">
+                    <!-- New bookings will be added here -->
+                </div>
+
+                {{ booking_formset.management_form }}
+
+                <div class="text-center mt-6">
+                    <button type="button" id="add-booking-btn" class="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-6 rounded-lg transition duration-200 flex items-center mx-auto">
+                        <span class="mr-2">+</span>
+                        Add Booking
+                    </button>
+                </div>
+
+                <!-- Bookings Formset Errors -->
+                {% if booking_formset.errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                        <h4 class="text-red-800 font-bold mb-2">⚠️ Booking Errors:</h4>
+                        {% for form in booking_formset %}
+                            {% if form.errors %}
+                                <div class="mb-2">
+                                    <strong class="text-red-800">Booking {{ forloop.counter }}:</strong>
+                                    {% for field, errors in form.errors.items %}
+                                        <div class="text-red-700">
+                                            {{ field|capfirst }}: {{ errors|join:", " }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-between">
+                <a href="{% url 'matches:fixtures' %}" class="bg-gray-600 hover:bg-gray-700 text-white py-3 px-8 rounded-lg transition duration-200 flex items-center">
+                    <span class="mr-2">←</span>
+                    Cancel
+                </a>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-3 px-8 rounded-lg transition duration-200 flex items-center">
+                    <span class="mr-2">💾</span>
+                    Save Match Result
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Templates for dynamic forms -->
+<template id="goal-template">
+    <div class="goal-form bg-gray-50 rounded-lg p-4 mb-4 border-2 border-dashed border-gray-300">
+        <div class="flex items-center justify-between mb-3">
+            <h5 class="font-bold text-gray-700 flex items-center">
+                <span class="mr-2">⚽</span>
+                Goal <span class="goal-number"></span>
+            </h5>
+            <button type="button" class="remove-goal text-red-600 hover:text-red-700 font-bold">
+                ✕ Remove
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label class="form-label font-semibold">Team</label>
+                <select class="form-control goal-team-select">
+                    <option value="team1">{{ fixture.team1.name }}</option>
+                    <option value="team2">{{ fixture.team2.name }}</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <label class="form-label font-semibold">Scorer</label>
+                <select class="form-control goal-scorer-select">
+                    <option value="">Select Scorer</option>
+                    <!-- Team players will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <label class="form-label font-semibold">Assist</label>
+                <select class="form-control goal-assist-select">
+                    <option value="">No Assist</option>
+                    <!-- Players will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <label class="form-label font-semibold">Minute</label>
+                <input type="number" class="form-control" min="0" max="120" placeholder="Min">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input own-goal-check" type="checkbox" name="goal-own-goal">
+                    <label class="form-check-label font-semibold text-orange-600">
+                        Own Goal
+                    </label>
+                </div>
+            </div>
+            
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input penalty-check" type="checkbox" name="goal-penalty">
+                    <label class="form-check-label font-semibold text-purple-600">
+                        Penalty
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="booking-template">
+    <div class="booking-form bg-gray-50 rounded-lg p-4 mb-4 border-2 border-dashed border-gray-300">
+        <div class="flex items-center justify-between mb-3">
+            <h5 class="font-bold text-gray-700 flex items-center">
+                <span class="mr-2">🟨</span>
+                Booking <span class="booking-number"></span>
+            </h5>
+            <button type="button" class="remove-booking text-red-600 hover:text-red-700 font-bold">
+                ✕ Remove
+            </button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label class="form-label font-semibold">Team</label>
+                <select class="form-control booking-team-select" name="booking-team">
+                    <option value="team1">{{ fixture.team1.name }}</option>
+                    <option value="team2">{{ fixture.team2.name }}</option>
+                </select>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <label class="form-label font-semibold">Player</label>
+                <select class="form-control booking-player-select" name="booking-player">
+                    <!-- Players will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <label class="form-label font-semibold">Card Type</label>
+                <select class="form-control booking-card-select" name="booking-card-type">
+                    <option value="yellow">🟨 Yellow Card</option>
+                    <option value="red">🟥 Red Card</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2 mb-3">
+                <label class="form-label font-semib-book">Minute</label>
+                <input type="number" class="form-control" name="booking-minute" min="0" max="120" placeholder="Min">
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+.score-input-container input {
+    font-size: 2rem !important;
+    text-align: center;
+    font-weight: bold;
+    border: 3px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.score-input-container input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+    transform: scale(1.05);
+}
+
+.team-score-section {
+    padding: 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.vs-divider {
+    padding: 2rem 0;
+}
+
+.goal-form, .booking-form {
+    transition: all 0.3s ease;
+}
+
+.goal-form:hover, .booking-form:hover {
+    border-color: #3b82f6 !important;
+    transform: translateY(-2px);
+}
+
+.form-check-input:checked {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.form-label {
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Validation styles */
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.score-input-container input.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Alert styles */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+}
+
+.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+.alert-error, .alert-danger {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-warning {
+    color: #664d03;
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+}
+
+.alert-info {
+    color: #055160;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+    .team-score-section {
+        margin-bottom: 1rem;
+        padding: 0.5rem !important;
+    }
+    
+    .vs-divider {
+        padding: 1rem 0;
+    }
+    
+    .vs-divider span {
+        font-size: 2rem !important;
+    }
+    
+    .col-md-3, .col-md-4, .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .goal-form, .booking-form {
+        padding: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .score-input-container input {
+        font-size: 1.5rem !important;
+        height: 60px !important;
+        width: 80px !important;
+        margin: 0 auto;
+    }
+    
+    .row {
+        margin: 0;
+        flex-direction: column;
+    }
+    
+    .col-md-3, .col-md-4, .col-md-6, .col-md-12 {
+        padding: 0 15px;
+        margin-bottom: 15px;
+    }
+    
+    .btn {
+        padding: 12px 20px !important;
+        font-size: 16px !important;
+        border-radius: 8px !important;
+    }
+    
+    .bg-white.rounded-xl.shadow-lg {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .text-4xl {
+        font-size: 2rem !important;
+    }
+    
+    .text-2xl {
+        font-size: 1.5rem !important;
+    }
+    
+    .bg-red-50, .alert {
+        padding: 1rem !important;
+        margin: 1rem 0 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .score-input-container input {
+        font-size: 1.2rem !important;
+        height: 50px !important;
+        width: 60px !important;
+    }
+    
+    .team-score-section {
+        padding: 0.25rem !important;
+    }
+    
+    .goal-form, .booking-form {
+        padding: 0.5rem !important;
+    }
+    
+    .btn {
+        padding: 10px 16px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* Loading states */
+.loading-indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+// Enhanced Dynamic Form Management System
+class MatchFormManager {
+    constructor() {
+        this.goalCount = 0;
+        this.bookingCount = 0;
+        this.goalFormNumber = 1;
+        this.bookingFormNumber = 1;
+        this.totalGoalForms = 0;
+        this.totalBookingForms = 0;
+        this.formValidators = [];
+        this.playerData = null;
+        this.init();
+    }
+    
+    async init() {
+        await this.loadPlayerData();
+        this.bindEvents();
+        this.setupFormValidation();
+        this.setupRealTimeValidation();
+    }
+    
+    async loadPlayerData() {
+        // Show loading indicator
+        this.showNotification('Loading player data...', 'info');
+        
+        // Fetch player data from API
+        try {
+            const response = await fetch(`{% url 'matches:fixture_players_api' fixture.id %}`);
+            const data = await response.json();
+            
+            if (response.ok) {
+                this.playerData = data;
+                this.showNotification('Player data loaded successfully!', 'success');
+                return data;
+            } else {
+                console.error('Error loading player data:', data.error);
+                this.showNotification('Failed to load player data', 'error');
+                return this.getFallbackPlayerData();
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            this.showNotification('Network error. Using fallback data.', 'warning');
+            return this.getFallbackPlayerData();
+        }
+    }
+    
+    getFallbackPlayerData() {
+        // Fallback data if API fails
+        return {
+            team1: {
+                name: '{{ fixture.team1.name }}',
+                players: [
+                    { id: 'demo-1', first_name: 'Demo', last_name: 'Player', position: 'Player' }
+                ]
+            },
+            team2: {
+                name: '{{ fixture.team2.name }}',
+                players: [
+                    { id: 'demo-2', first_name: 'Demo', last_name: 'Player', position: 'Player' }
+                ]
+            },
+            all_players: [
+                { id: 'demo-1', first_name: 'Demo', last_name: 'Player1', position: 'Player', club__name: '{{ fixture.team1.name }}' },
+                { id: 'demo-2', first_name: 'Demo', last_name: 'Player2', position: 'Player', club__name: '{{ fixture.team2.name }}' }
+            ]
+        };
+    }
+    
+    bindEvents() {
+        // Add Goal button
+        document.getElementById('add-goal-btn').addEventListener('click', () => {
+            this.goalCount++;
+            this.addGoal(this.goalCount);
+            this.showNotification('⚽ Goal entry added!', 'success');
+        });
+        
+        // Add Booking button
+        document.getElementById('add-booking-btn').addEventListener('click', () => {
+            this.bookingCount++;
+            this.addBooking(this.bookingCount);
+            this.putOnSound('add');
+            this.showNotification('🟨 Booking entry added!', 'info');
+        });
+        
+        // Form submission
+        document.getElementById('dynamic-result-form').addEventListener('submit', (e) => {
+            this.handleFormSubmission(e);
+        });
+        
+        // Real-time goal validation
+        document.addEventListener('input', (e) => {
+            if (e.target.name === 'team1_goals' || e.target.name === 'team2_goals') {
+                this.validateGoalRange(e.target);
+            }
+        });
+    }
+    
+    addGoal(number) {
+        const template = document.getElementById('goal-template').content.cloneNode(true);
+        template.querySelector('.goal-number').textContent = this.goalFormNumber++;
+        
+        // Update form field names to match Django formset format
+        const scorerSelect = template.querySelector('.goal-scorer-select');
+        const assistSelect = template.querySelector('.goal-assist-select');
+        const minuteInput = template.querySelector('input[name="goal-minute"]');
+        const ownGoalCheck = template.querySelector('.own-goal-check');
+        const penaltyCheck = template.querySelector('.penalty-check');
+        
+        scorerSelect.name = `goals-${this.totalGoalForms}-scorer`;
+        scorerSelect.id = `id_goals-${this.totalGoalForms}-scorer`;
+        assistSelect.name = `goals-${this.totalGoalForms}-assist`;
+        assistSelect.id = `id_goals-${this.totalGoalForms}-assist`;
+        minuteInput.name = `goals-${this.totalGoalForms}-minute`;
+        minuteInput.id = `id_goals-${this.totalGoalForms}-minute`;
+        ownGoalCheck.name = `goals-${this.totalGoalForms}-own_goal`;
+        ownGoalCheck.id = `id_goals-${this.totalGoalForms}-own_goal`;
+        penaltyCheck.name = `goals-${this.totalGoalForms}-penalty`;
+        penaltyCheck.id = `id_goals-${this.totalGoalForms}-penalty`;
+        
+        const container = document.getElementById('dynamic-goals-container');
+        container.appendChild(template);
+        
+        const goalForm = container.lastElementChild;
+        this.setupGoalEventListeners(goalForm);
+        this.populateGoalPlayers(goalForm);
+        
+        // Update management form
+        this.updateGoalManagementForm();
+    }
+    
+    updateGoalManagementForm() {
+        const totalForms = document.getElementById('id_goals-TOTAL_FORMS');
+        if (totalForms) {
+            this.totalGoalForms = parseInt(totalForms.value);
+            this.totalGoalForms++;
+            totalForms.value = this.totalGoalForms;
+        }
+    }
+    
+    updateBookingManagementForm() {
+        const totalForms = document.getElementById('id_bookings-TOTAL_FORMS');
+        if (totalForms) {
+            this.totalBookingForms = parseInt(totalForms.value);
+            this.totalBookingForms++;
+            totalForms.value = this.totalBookingForms;
+        }
+    }
+    
+    addBooking(number) {
+        const template = document.getElementById('booking-template').content.cloneNode(true);
+        template.querySelector('.booking-number').textContent = this.bookingFormNumber++;
+        
+        // Update form field names to match Django formset format
+        const teamSelect = template.querySelector('.booking-team-select');
+        const playerSelect = template.querySelector('.booking-player-select');
+        const cardSelect = template.querySelector('.booking-card-select');
+        const minuteInput = template.querySelector('input[name="booking-minute"]');
+        
+        playerSelect.name = `bookings-${this.totalBookingForms}-player`;
+        playerSelect.id = `id_bookings-${this.totalBookingForms}-player`;
+        cardSelect.name = `bookings-${this.totalBookingForms}-card_type`;
+        cardSelect.id = `id_bookings-${this.totalBookingForms}-card_type`;
+        minuteInput.name = `bookings-${this.totalBookingForms}-minute`;
+        minuteInput.id = `id_bookings-${this.totalBookingForms}-minute`;
+        
+        const container = document.getElementById('dynamic-bookings-container');
+        container.appendChild(template);
+        
+        const bookingForm = container.lastElementChild;
+        this.setupBookingEventListeners(bookingForm);
+        this.populateBookingPlayers(bookingForm);
+        
+        // Update management form
+        this.updateBookingManagementForm();
+    }
+    
+    setupGoalEventListeners(goalForm) {
+        // Remove functionality
+        const removeBtn = goalForm.querySelector('.remove-goal');
+        removeBtn.addEventListener('click', () => {
+            this.removeGoal(goalForm);
+        });
+        
+        // Team selection change
+        const teamSelect = goalForm.querySelector('.goal-team-select');
+        teamSelect.addEventListener('change', () => {
+            this.updateGoalPlayers(goalForm);
+        });
+    }
+    
+    setupBookingEventListeners(bookingForm) {
+        // Remove functionality
+        const removeBtn = bookingForm.querySelector('.remove-booking');
+        removeBtn.addEventListener('click', () => {
+            this.removeBooking(bookingForm);
+        });
+        
+        // Team selection change
+        const teamSelect = bookingForm.querySelector('.booking-team-select');
+        teamSelect.addEventListener('change', () => {
+            this.updateBookingPlayers(bookingForm);
+        });
+    }
+    
+    removeGoal(goalForm) {
+        goalForm.style.transition = 'all 0.3s ease';
+        goalForm.style.opacity = '0';
+        goalForm.style.transform = 'translateX(-100%)';
+        
+        setTimeout(() => {
+            goalForm.remove();
+            this.showNotification('⚽ Goal entry removed!', 'warning');
+        }, 300);
+    }
+    
+    removeBooking(bookingForm) {
+        bookingForm.style.transition = 'all 0.3s ease';
+        bookingForm.style.opacity = '0';
+        bookingForm.style.transform = 'translateX(-100%)';
+        
+        setTimeout(() => {
+            bookingForm.remove();
+            this.showNotification('🟨 Booking entry removed!', 'warning');
+        }, 300);
+    }
+    
+    populateGoalPlayers(goalForm) {
+        this.updateGoalPlayers(goalForm);
+    }
+    
+    populateBookingPlayers(bookingForm) {
+        this.updateBookingPlayers(bookingForm);
+    }
+    
+    updateGoalPlayers(goalForm) {
+        const team = goalForm.querySelector('.goal-team-select').value;
+        const scorerSelect = goalForm.querySelector('.goal-scorer-select');
+        const assistSelect = goalForm.querySelector('.goal-assist-select');
+        
+        // Clear existing options
+        scorerSelect.innerHTML = '<option value="">Select Scorer</option>';
+        assistSelect.innerHTML = '<option value="">Select Assist (Optional)</option>';
+        
+        // Get players from API data
+        let players = [];
+        if (this.playerData) {
+            if (team === 'team1') {
+                players = this.playerData.team1.players || [];
+            } else {
+                players = this.playerData.team2.players || [];
+            }
+        }
+        
+        // Add players to dropdowns
+        players.forEach(player => {
+            const playerName = `${player.first_name} ${player.last_name} (${player.position})`;
+            const option1 = document.createElement('option');
+            option1.value = player.id;
+            option1.textContent = playerName;
+            scorerSelect.appendChild(option1.cloneNode(true));
+            assistSelect.appendChild(option1.cloneNode(true));
+        });
+    }
+    
+    updateBookingPlayers(bookingForm) {
+        const team = bookingForm.querySelector('.booking-team-select').value;
+        const playerSelect = bookingForm.querySelector('.booking-player-select');
+        
+        // Clear existing options
+        playerSelect.innerHTML = '<option value="">Select Player</option>';
+        
+        // Get players from API data
+        let players = [];
+        if (this.playerData) {
+            if (team === 'team1') {
+                players = this.playerData.team1.players || [];
+            } else {
+                players = this.playerData.team2.players || [];
+            }
+        }
+        
+        // Add players to dropdown
+        players.forEach(player => {
+            const playerName = `${player.first_name} ${player.last_name} (${player.position})`;
+            const option = document.createElement('option');
+            option.value = player.id;
+            option.textContent = playerName;
+            playerSelect.appendChild(option);
+        });
+    }
+    
+    validateGoalRange(input) {
+        const value = parseInt(input.value);
+        const maxGoals = 10;
+        
+        if (value > maxGoals) {
+            input.value = maxGoals;
+            this.showNotification(`Maximum ${maxGoals} goals allowed`, 'warning');
+        }
+        
+        if (value < 0) {
+            input.value = 0;
+        }
+    }
+    
+    setupFormValidation() {
+        this.formValidators.push({
+            name: 'required_fields',
+            validate: () => {
+                const team1Goals = document.querySelector('input[name="team1_goals"]');
+                const team2Goals = document.querySelector('input[name="team2_goals"]');
+                
+                if (team1Goals && !team1Goals.value.trim()) {
+                    this.showFieldError(team1Goals, 'Team 1 goals are required');
+                    throw new Error('Team 1 goals are required');
+                }
+                
+                if (team2Goals && !team2Goals.value.trim()) {
+                    this.showFieldError(team2Goals, 'Team 2 goals are required');
+                    throw new Error('Team 2 goals are required');
+                }
+                
+                // Clear any existing errors
+                this.clearFieldErrors([team1Goals, team2Goals]);
+                
+                return true;
+            }
+        });
+        
+        this.formValidators.push({
+            name: 'goal_validation',
+            validate: () => {
+                const goalForms = document.querySelectorAll('#goals-container .goal-form');
+                let hasValidGoals = true;
+                
+                goalForms.forEach((goalForm, index) => {
+                    const scorer = goalForm.querySelector('.goal-scorer-select').value;
+                    const minute = goalForm.querySelector('input[name="goal-minute"]').value;
+                    
+                    if (!scorer && !minute) return; // Skip empty forms
+                    
+                    if (!scorer) {
+                        this.showFieldError(goalForm.querySelector('.goal-scorer-select'), `Goal ${index + 1}: Scorer is required`);
+                        hasValidGoals = false;
+                    }
+                    
+                    if (!minute) {
+                        this.showFieldError(goalForm.querySelector('input[name="goal-minute"]'), `Goal ${index + 1}: Minute is required`);
+                        hasValidGoals = false;
+                    } else if (parseInt(minute) > 120) {
+                        this.showFieldError(goalForm.querySelector('input[name="goal-minute"]'), `Goal ${index + 1}: Minute cannot exceed 120`);
+                        hasValidGoals = false;
+                    }
+                });
+                
+                return hasValidGoals;
+            }
+        });
+    }
+    
+    showFieldError(field, message) {
+        field.classList.add('is-invalid');
+        
+        let errorDiv = field.parentElement.querySelector('.invalid-feedback');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback';
+            field.parentElement.appendChild(errorDiv);
+        }
+        errorDiv.textContent = message;
+    }
+    
+    clearFieldErrors(fields) {
+        fields.forEach(field => {
+            if (field) {
+                field.classList.remove('is-invalid');
+                const errorDiv = field.parentElement.querySelector('.invalid-feedback');
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+        });
+    }
+    
+    setupRealTimeValidation() {
+        document.addEventListener('input', () => {
+            this.validateForm();
+        });
+    }
+    
+    validateForm() {
+        const errors = [];
+        
+        this.formValidators.forEach(validator => {
+            try {
+                validator.validate();
+            } catch (error) {
+                errors.push(`❌ ${error.message}`);
+            }
+        });
+        
+        if (errors.length === 0) {
+            this.showValidationStatus('✅ Form is valid', 'success');
+            return true;
+        } else {
+            this.showValidationStatus(errors.join('<br>'), 'error');
+            return false;
+        }
+    }
+    
+    handleFormSubmission(e) {
+        if (!this.validateForm()) {
+            if (e) e.preventDefault();
+            this.showNotification('Please fix errors before submitting', 'error');
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = document.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="loading-indicator"></span>Saving...';
+        submitBtn.disabled = true;
+        
+        // Allow Django to handle form submission naturally
+        // The formsets are already properly configured
+        return true;
+    }
+    
+    processFormData() {
+        // Clear any existing dynamic form data
+        document.querySelectorAll('input[name^="goals-tmp"]').forEach(input => input.remove());
+        
+        // Process goals - create Django formset format
+        const goalsForms = document.querySelectorAll('#goals-container .goal-form');
+        if (goalsForms.length > 0) {
+            // Update management form
+            const totalFormsInput = document.getElementById('id_goals-TOTAL_FORMS');
+            if (!totalFormsInput) {
+                // Create management form data
+                const mgInput = document.createElement('input');
+                mgInput.type = 'hidden';
+                mgInput.name = 'goals-TOTAL_FORMS';
+                mgInput.id = 'id_goals-TOTAL_FORMS';
+                mgInput.value = goalsForms.length;
+                document.getElementById('dynamic-result-form').appendChild(mgInput);
+            } else {
+                totalFormsInput.value = goalsForms.length;
+            }
+            
+            goalsForms.forEach((goalForm, index) => {
+                const scorer = goalForm.querySelector('.goal-scorer-select').value;
+                const minute = goalForm.querySelector('input[name="goal-minute"]').value;
+                const assist = goalForm.querySelector('.goal-assist-select').value;
+                const ownGoal = goalForm.querySelector('.own-goal-check').checked;
+                const penalty = goalForm.querySelector('.penalty-check').checked;
+                
+                // Only add non-empty goals
+                if (scorer && minute) {
+                    this.addHiddenInput(`goals-${index}-scorer`, scorer);
+                    this.addHiddenInput(`goals-${index}-minute`, minute);
+                    if (assist) this.addHiddenInput(`goals-${index}-assist`, assist);
+                    if (ownGoal) this.addHiddenInput(`goals-${index}-own_goal`, 'on');
+                    if (penalty) this.addHiddenInput(`goals-${index}-penalty`, 'on');
+                }
+            });
+        }
+        
+        // Process bookings - create Django formset format
+        const bookingForms = document.querySelectorAll('#bookings-container .booking-form');
+        if (bookingForms.length > 0) {
+            // Update management form
+            const totalBookingFormsInput = document.getElementById('id_bookings-TOTAL_FORMS');
+            if (!totalBookingFormsInput) {
+                const mgInput = document.createElement('input');
+                mgInput.type = 'hidden';
+                mgInput.name = 'bookings-TOTAL_FORMS';
+                mgInput.id = 'id_bookings-TOTAL_FORMS';
+                mgInput.value = bookingForms.length;
+                document.getElementById('dynamic-result-form').appendChild(mgInput);
+            } else {
+                totalBookingFormsInput.value = bookingForms.length;
+            }
+            
+            bookingForms.forEach((bookingForm, index) => {
+                const player = bookingForm.querySelector('.booking-player-select').value;
+                const cardType = bookingForm.querySelector('.booking-card-select').value;
+                const minute = bookingForm.querySelector('input[name="booking-minute"]').value;
+                
+                // Only add non-empty bookings
+                if (player && minute) {
+                    this.addHiddenInput(`bookings-${index}-player`, player);
+                    this.addHiddenInput(`bookings-${index}-card_type`, cardType);
+                    this.addHiddenInput(`bookings-${index}-minute`, minute);
+                }
+            });
+        }
+    }
+    
+    addHiddenInput(name, value) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        document.getElementById('dynamic-result-form').appendChild(input);
+    }
+    
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+        
+        const colors = {
+            success: 'bg-green-500 text-white',
+            error: 'bg-red-500 text-white',
+            warning: 'bg-yellow-500 text-black',
+            info: 'bg-blue-500 text-white'
+        };
+        
+        notification.className += ` ${colors[type]}`;
+        notification.innerHTML = message;
+        
+        document.body.appendChild(notification);
+        
+        // Slide in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Slide out after 3 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    
+    showValidationStatus(message, type) {
+        let statusDiv = document.getElementById('validation-status');
+        if (!statusDiv) {
+            statusDiv = document.createElement('div');
+            statusDiv.id = 'validation-status';
+            statusDiv.className = 'fixed bottom-4 right-4 max-w-md p-4 rounded-lg shadow-lg z-50';
+            document.body.appendChild(statusDiv);
+        }
+        
+        const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white'
+        };
+        
+        statusDiv.className = `fixed bottom-4 right-4 max-w-md p-4 rounded-lg shadow-lg z-50 ${colors[type]}`;
+        statusDiv.innerHTML = message;
+    }
+}
+
+// Initialize form manager when DOM is ready
+document.addEventListener('DOMContentLoaded', async function() {
+    window.matchFormManager = new MatchFormManager();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + Enter to submit
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        document.querySelector('button[type="submit"]').click();
+    }
+    
+    // Ctrl/Cmd + G to add goal
+    if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+        e.preventDefault();
+        document.getElementById('add-goal-btn').click();
+    }
+    
+    // Ctrl/Cmd + B to add booking
+    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        document.getElementById('add-booking-btn').click();
+    }
+});
+</script>
+
+{% endblock %}
+    

@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistics - Wasl Village Premier League Season 3{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">League Statistics</h1>
+        <p class="text-gray-600 mt-2">Comprehensive league data and insights</p>
+    </div>
+    <a href="{% url 'matches:table' %}" 
+       class="bg-soccer-green text-white px-4 py-2 rounded-lg hover:bg-soccer-dark transition-colors">
+        View League Table
+    </a>
+</div>
+
+<!-- Summary Statistics cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.196-2.121M17 20H7m10 0v-2c0-4.4-3.6-8-8-8s-8 3.6-8 8v2h16z"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Total Clubs</h3>
+                <p class="text-3xl font-bold text-blue-600">{{ total_clubs }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Matches Played</h3>
+                <p class="text-3xl font-bold text-green-600">{{ total_matches }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-yellow-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Goals Scored</h3>
+                <p class="text-3xl font-bold text-yellow-600">{{ total_goals }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Goals per Match</h3>
+                <p class="text-3xl font-bold text-purple-600">{{ avg_goals_per_match }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Top Goalscorers -->
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-t-lg">
+            <h2 class="text-xl font-semibold">Top Goalscorers</h2>
+        </div>
+        <div class="p-6">
+            {% if top_scorers %}
+                <div class="space-y-4">
+                    {% for scorer in top_scorers %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-center font-bold text-lg text-soccer-green">{{ forloop.counter }}</div>
+                                <div>
+                                    <div class="font-semibold">{{ scorer.scorer__first_name }} {{ scorer.scorer__last_name }}</div>
+                                    <div class="text-sm text-gray-600">{{ scorer.scorer__club__name }}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-soccer-green">{{ scorer.goals_count }}</div>
+                                <div class="text-xs text-gray-500">goals</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <p>No goals scored yet</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Most Disciplined Teams -->
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-t-lg">
+            <h2 class="text-xl font-semibold">Disciplinary Points</h2>
+        </div>
+        <div class="p-6">
+            {% if most_disciplined %}
+                <div class="space-y-4">
+                    {% for team in most_disciplined %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <div class="font-semibold">{{ team.player__club__name }}</div>
+                                <div class="text-sm text-gray-600">
+                                    🔴 {{ team.red_cards }} red cards  
+                                    🟡 {{ team.yellow_cards }} yellow cards
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-red-600">{{ team.total_cards }}</div>
+                                <div class="text-xs text-gray-500">points</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"/>
+                    </svg>
+                    <p>No disciplinary records</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- League Table Mini -->
+<div class="mt-8 bg-white rounded-lg shadow-lg">
+    <div class="bg-gradient-to-r from-soccer-green to-soccer-dark text-white px-6 py-4 rounded-t-lg">
+        <h2 class="text-xl font-semibold">Current League Standings</h2>
+    </div>
+    <div class="p-6">
+        {% if table_data %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for club in table_data %}
+                <div class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-3">
+                            {% if club.club.logo %}
+                                <img class="h-10 w-10 rounded-full object-cover" 
+                                     src="{{ club.club.logo.url }}" 
+                                     alt="{{ club.club.name }}">
+                            {% else %}
+                                <div class="h-10 w-10 bg-soccer-green rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold">{{ club.club.name|first }}</span>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="font-semibold">{{ club.club.name }}</div>
+                                <div class="text-sm text-gray-600">P: {{ club.matches_played }} W: {{ club.wins }} D: {{ club.draws }} L: {{ club.losses }}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xl font-bold text-soccer-green">{{ club.points }}</div>
+                            <div class="text-sm text-gray-600">pts</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        GF: {{ club.goals_for }} GA: {{ club.goals_against }} 
+                        GD: <span class="{% if club.goal_difference > 0 %}text-green-600{% elif club.goal_difference < 0 %}text-red-600{% else %}text-gray-600{% endif %}">{{ club.goal_difference }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-gray-500 py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <p>No league table data available</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

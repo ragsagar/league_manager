@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}League Table - Wasl Village Premier League Season 3{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">{{ season_title }}</h1>
+        <p class="text-gray-600 mt-2">Current league standings with comprehensive statistics</p>
+    </div>
+    <div class="flex space-x-3">
+        <button onclick="refreshTable()" 
+                class="bg-soccer-green text-white px-4 py-2 rounded-lg hover:bg-soccer-dark transition-colors">
+            <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m4.414 13A8.001 8.001 0 0019.418 15M7 12H3m8-8h8m0 8h4"/>
+            </svg>
+            Refresh
+        </button>
+        <a href="{% url 'matches:statistics' %}" 
+           class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+            <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 002 2v6a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Statistics
+        </a>
+    </div>
+</div>
+
+<!-- League Table -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-gradient-to-r from-soccer-green to-soccer-dark text-white px-6 py-4">
+        <h2 class="text-xl font-semibold">League Table</h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Pos
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Club
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Form
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        P
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        W
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        D
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        L
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        GF
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        GA
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        GD
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        YC
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        RC
+                    </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider font-bold">
+                        Pts
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for club_data in table_data %}
+                <tr class="{% if forloop.counter <= 4 %}bg-gradient-to-r from-yellow-50 to-blue-50{% elif forloop.counter|add:"-12" > 0 %}bg-gradient-to-r from-red-50 to-pink-50{% else %}hover:bg-gray-50{% endif %} transition-colors">
+                    <!-- Position -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            {% if club_data.position <= 4 %}
+                                <span class="w-6 h-6 bg-yellow-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                    {{ club_data.position }}
+                                </span>
+                            {% elif club_data.position <= 6 %}
+                                <span class="w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                    {{ club_data.position }}
+                                </span>
+                            {% elif forloop.counter|add:"-12" >= 0 %}
+                                <span class="w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                    {{ club_data.position }}
+                                </span>
+                            {% else %}
+                                <span class="w-6 h-6 bg-gray-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                    {{ club_data.position }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    
+                    <!-- Club -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            {% if club_data.club.logo %}
+                                <img class="h-8 w-8 rounded-full object-cover mr-3" 
+                                     src="{{ club_data.club.logo.url }}" 
+                                     alt="{{ club_data.club.name }}">
+                            {% else %}
+                                <div class="h-8 w-8 bg-soccer-green rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-xs font-bold">{{ club_data.club.name|first }}</span>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">{{ club_data.club.name }}</div>
+                                {% if club_data.manager_info %}
+                                    <div class="text-xs text-gray-500">
+                                        Manager: {{ club_data.manager_info.first_name }} {{ club_data.manager_info.last_name }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <!-- Form -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <div class="flex space-x-1 justify-center">
+                            {% for result in club_data.form|slice:":5" %}
+                                {% if result == 'W' %}
+                                    <span class="w-4 h-4 bg-green-500 text-white text-xs rounded flex items-center justify-center font-bold">W</span>
+                                {% elif result == 'D' %}
+                                    <span class="w-4 h-4 bg-yellow-500 text-white text-xs rounded flex items-center justify-center font-bold">D</span>
+                                {% elif result == 'L' %}
+                                    <span class="w-4 h-4 bg-red-500 text-white text-xs rounded flex items-center justify-center font-bold">L</span>
+                                {% else %}
+                                    <span class="w-4 h-4 bg-gray-300 text-gray-600 text-xs rounded flex items-center justify-center font-bold">-</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </td>
+                    
+                    <!-- Matches Played -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-gray-900 font-semibold">{{ club_data.matches_played }}</span>
+                    </td>
+                    
+                    <!-- Wins -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-green-600 font-semibold">{{ club_data.wins }}</span>
+                    </td>
+                    
+                    <!-- Draws -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-yellow-600 font-semibold">{{ club_data.draws }}</span>
+                    </td>
+                    
+                    <!-- Losses -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-red-600 font-semibold">{{ club_data.losses }}</span>
+                    </td>
+                    
+                    <!-- Goals For -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-blue-600 font-semibold">{{ club_data.goals_for }}</span>
+                    </td>
+                    
+                    <!-- Goals Against -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-purple-600 font-semibold">{{ club_data.goals_against }}</span>
+                    </td>
+                    
+                    <!-- Goal Difference -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm font-semibold {% if club_data.goal_difference > 0 %}text-green-600{% elif club_data.goal_difference < 0 %}text-red-600{% else %}text-gray-600{% endif %}">
+                            {{ club_data.goal_difference|add:0 }}
+                        </span>
+                    </td>
+                    
+                    <!-- Yellow Cards -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-yellow-600 font-semibold">{{ club_data.yellow_cards }}</span>
+                    </td>
+                    
+                    <!-- Red Cards -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-sm text-red-600 font-semibold">{{ club_data.red_cards }}</span>
+                    </td>
+                    
+                    <!-- Points -->
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <span class="text-lg font-bold text-soccer-green">{{ club_data.points }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="13" class="px-6 py-8 text-center text-gray-500">
+                        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <p>No league data available</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Additional Statistics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Performers</h3>
+        <div class="space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">Most Points:</span>
+                <span class="text-sm font-semibold text-soccer-green">
+                    {% for club_data in table_data|slice:":1" %}{{ club_data.points }}{% endfor %} pts
+                </span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">Best Goal Diff:</span>
+                <span class="text-sm font-semibold text-green-600">
+                    {% for club_data in table_data|slice:":1" %}{{ club_data.goal_difference }}{% endfor %}
+                </span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">Least Disciplinary:</span>
+                <span class="text-sm font-semibold text-blue-600">
+                    {% for club_data in table_data|slice:"-1:" %}{{ club_data.total_cards }}{% endfor %}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Season Summary</h3>
+        <div class="space-y-3">
+            {% with total_clubs=table_data|length total_points=0 %}
+                {% for club_data in table_data %}
+                    {% with total_points=total_points|add:club_data.points %}{% endwith %}
+                {% endfor %}
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Total Clubs:</span>
+                    <span class="text-sm font-semibold text-gray-900">{{ total_clubs }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Total Goals:</span>
+                    <span class="text-sm font-semibold text-blue-600">
+                        {% with total_goals=0 %}
+                            {% for club_data in table_data %}
+                                {% with total_goals=total_goals|add:club_data.goals_for %}
+                                {% endwith %}
+                            {% endfor %}
+                            {{ total_goals }}
+                        {% endwith %}
+                    </span>
+                </div>
+            {% endwith %}
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshTable() {
+    location.reload();
+}
+</script>
+{% endblock %}

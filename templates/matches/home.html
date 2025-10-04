@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Wasl Village Premier League Season 3 - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-soccer-green to-soccer-dark rounded-lg shadow-lg p-8 mb-8">
+    <div class="text-center text-white">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+            Wasl Village Premier League Season 3 ⚽
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 opacity-90">
+            Season 3 - 2025 | Professional football league management
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'matches:table' %}" 
+               class="bg-white text-soccer-dark px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                View League Table
+            </a>
+            <a href="{% url 'matches:fixtures' %}" 
+               class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-soccer-dark transition-colors">
+                View Fixtures
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.196-2.121M17 20H7m10 0v-2c0-4.4-3.6-8-8-8s-8 3.6-8 8v2h16z"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Total Clubs</h3>
+                <p class="text-3xl font-bold text-blue-600">{{ total_clubs }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-3 border-green-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Matches Played</h3>
+                <p class="text-3xl font-bold text-green-600">{{ total_matches_played }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Goals Scored</h3>
+                <p class="text-3xl font-bold text-yellow-600">{{ total_goals_scored }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <svg class="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold text-gray-900">Season Progress</h3>
+                <p class="text-3xl font-bold text-purple-600">{{ season_progress }}%</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Upcoming Fixtures -->
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="bg-soccer-green text-white px-6 py-4 rounded-t-lg">
+            <h2 class="text-xl font-semibold">Upcoming Fixtures</h2>
+        </div>
+        <div class="p-6">
+            {% if upcoming_fixtures %}
+                <div class="space-y-4">
+                    {% for fixture in upcoming_fixtures %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="font-semibold text-sm">{{ fixture.team1.name }}</div>
+                            </div>
+                            <div class="text-gray-500">vs</div>
+                            <div class="text-center">
+                                <div class="font-semibold text-sm">{{ fixture.team2.name }}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-600">{{ fixture.date|date:"M d" }}</div>
+                            <div class="text-xs text-gray-500">{{ fixture.date|date:"H:i" }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 text-center">
+                    <a href="{% url 'matches:fixtures' %}" 
+                       class="text-soccer-green hover:text-soccer-dark font-semibold">
+                        View All Fixtures →
+                    </a>
+                </div>
+            {% else %}
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 000 2h7a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    <p>No upcoming fixtures scheduled</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Recent Results -->
+    <div class="bg-white rounded-lg shadow-lg">
+        <div class="bg-soccer-dark text-white px-6 py-4 rounded-t-lg">
+            <h2 class="text-xl font-semibold">Recent Results</h2>
+        </div>
+        <div class="p-6">
+            {% if recent_results %}
+                <div class="space-y-4">
+                    {% for result in recent_results %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="font-semibold text-sm">{{ result.fixture.team1.name }}</div>
+                            </div>
+                            <div class="bg-soccer-green text-white px-2 py-1 rounded text-sm font-semibold">
+                                {{ result.team1_goals }} - {{ result.team2_goals }}
+                            </div>
+                            <div class="text-center">
+                                <div class="font-semibold text-sm">{{ result.fixture.team2.name }}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-600">{{ result.fixture.date|date:"M d" }}</div>
+                            {% if result.man_of_match %}
+                                <div class="text-xs text-gold font-semibold">⭐ {{ result.man_of_match.first_name|truncatechars:8 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 text-center">
+                    <a href="{% url 'matches:statistics' %}" 
+                       class="text-soccer-dark hover:text-soccer-green font-semibold">
+                        View Statistics →
+                    </a>
+                </div>
+            {% else %}
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>No recent results available</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{% url 'matches:table' %}" 
+           class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg text-center hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
+            <svg class="mx-auto h-8 w-8 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <h3 class="text-lg font-semibold mb-2">League Table</h3>
+            <p class="text-sm opacity-90">View current standings and form</p>
+        </a>
+        
+        <a href="{% url 'matches:fixtures' %}" 
+           class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg text-center hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105">
+            <svg class="mx-auto h-8 w-8 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <h3 class="text-lg font-semibold mb-2">Fixtures</h3>
+            <p class="text-sm opacity-90">View upcoming matches and schedules</p>
+        </a>
+        
+        <a href="{% url 'matches:statistics' %}" 
+           class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg text-center hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
+            <svg class="mx-auto h-8 w-8 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <h3 class="text-lg font-semibold mb-2">Statistics</h3>
+            <p class="text-sm opacity-90">Explore detailed league statistics</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

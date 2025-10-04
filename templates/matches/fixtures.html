@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fixtures - Wasl Village Premier League Season 3{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Fixtures</h1>
+        <p class="text-gray-600 mt-2">Match schedules and results</p>
+    </div>
+    <div class="flex space-x-3">
+        <a href="/admin/matches/fixture/add/" 
+           class="bg-soccer-green text-white px-4 py-2 rounded-lg hover:bg-soccer-dark transition-colors">
+            <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Add Fixture
+        </a>
+    </div>
+</div>
+
+<!-- Schedule Status Filter -->
+<div class="bg-gray-100 rounded-lg p-6 mb-8">
+    <div class="flex flex-wrap gap-2 mb-4">
+        <span class="text-sm font-medium text-gray-700">Filter by:</span>
+        <a href="{% url 'matches:fixtures' %}?filter=all" 
+           class="px-3 py-1 text-sm rounded-full {% if filter == 'all' %}bg-soccer-green text-white{% else %}bg-white text-gray-600 hover:bg-gray-200{% endif %} transition-colors">
+            All Matches
+        </a>
+        <a href="{% url 'matches:fixtures' %}?filter=upcoming" 
+           class="px-3 py-1 text-sm rounded-full {% if filter == 'upcoming' %}bg-soccer-green text-white{% else %}bg-white text-gray-600 hover:bg-gray-200{% endif %} transition-colors">
+            Upcoming
+        </a>
+        <a href="{% url 'matches:fixtures' %}?filter=past" 
+           class="px-3 py-1 text-sm rounded-full {% if filter == 'past' %}bg-soccer-green text-white{% else %}bg-white text-gray-600 hover:bg-gray-200{% endif %} transition-colors">
+            Completed
+        </a>
+    </div>
+</div>
+
+{% if fixtures %}
+    <!-- Fixtures Timeline -->
+    <div class="space-y-6">
+        {% for fixture in fixtures %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <div class="{% if fixture.result %}bg-gray-100{% else %}bg-gradient-to-r from-soccer-green to-soccer-dark{% endif %} text-white px-6 py-3">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden sm:block">
+                            <div class="text-sm opacity-90">{{ fixture.date|date:"M d, Y" }}</div>
+                            <div class="text-lg font-bold">{{ fixture.date|date:"H:i" }}</div>
+                        </div>
+                        <span class="hidden sm:block text-xs opacity-80">{{ fixture.venue }}</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="{% if fixture.result %}bg-gray-200 text-gray-800{% else %}bg-white text-soccer-green{% endif %} px-2 py-1 text-xs font-semibold rounded-full">
+                            {% if fixture.result %}Completed{% else %}Upcoming{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <!-- Home Team -->
+                    <div class="text-center">
+                        <div class="mb-2">
+                            {% if fixture.team1.logo %}
+                                <img class="h-12 w-12 mx-auto rounded-full object-cover" 
+                                     src="{{ fixture.team1.logo.url }}" 
+                                     alt="{{ fixture.team1.name }}">
+                            {% else %}
+                                <div class="h-12 w-12 bg-soccer-green rounded-full mx-auto flex items-center justify-center">
+                                    <span class="text-white font-bold">{{ fixture.team1.name|first }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ fixture.team1.name }}</h3>
+                    </div>
+                    
+                    <!-- Match Info -->
+                    <div class="text-center">
+                        {% if fixture.result %}
+                            <div class="text-3xl font-bold text-soccer-green mb-2">
+                                {{ fixture.result.home_goals }} - {{ fixture.result.away_goals }}
+                            </div>
+                            {% if fixture.result.man_of_match %}
+                                <div class="text-sm text-gold">
+                                    ⭐ MOM: {{ fixture.result.man_of_match.first_name }} {{ fixture.result.man_of_match.last_name }}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-gray-400 text-xl font-light">
+                                vs
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                {{ fixture.date|date:"H:i" }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Away Team -->
+                    <div class="text-center">
+                        <div class="mb-2">
+                            {% if fixture.team2.logo %}
+                                <img class="h-12 w-12 mx-auto rounded-full object-cover" 
+                                     src="{{ fixture.team2.logo.url }}" 
+                                     alt="{{ fixture.team2.name }}">
+                            {% else %}
+                                <div class="h-12 w-12 bg-soccer-green rounded-full mx-auto flex items-center justify-center">
+                                    <span class="text-white font-bold">{{ fixture.team2.name|first }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ fixture.team2.name }}</h3>
+                    </div>
+                </div>
+                
+                <!-- Venue and Actions -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+                        <div class="text-sm text-gray-600">
+                            <span class="hidden sm:inline">📅 {{ fixture.date|date:"M d, Y" }} at {{ fixture.date|date:"H:i" }}</span>
+                            <span class="sm:hidden">📅 {{ fixture.date|date:"M d, H:i" }}</span>
+                            <span> • 📍 {{ fixture.venue }}</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            {% if fixture.result %}
+                                <a href="{% url 'matches:match_detail' fixture.result.id %}" 
+                                   class="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-600 transition-colors">
+                                    View Details
+                                </a>
+                            {% else %}
+                                <a href="{% url 'matches:result_entry' fixture.id %}" 
+                                   class="bg-soccer-green text-white px-4 py-2 text-sm rounded-lg hover:bg-soccer-dark transition-colors">
+                                    Enter Result
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="flex justify-center mt-8">
+        <nav class="flex items-center space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" 
+                   class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    First
+                </a>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="px-3 py-2 text-sm bg-soccer-green text-white rounded-lg">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" 
+                       class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.filter %}&filter={{ request.GET.filter }}{% endif %}" 
+                   class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    Last
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+    
+{% else %}
+    <!-- No Fixtures -->
+    <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No fixtures found</h3>
+        <p class="text-gray-600 mb-6">
+            {% if filter == 'upcoming' %}
+                There are no upcoming fixtures scheduled.
+            {% elif filter == 'past' %}
+                No completed fixtures found.
+            {% else %}
+                No fixtures have been added yet.
+            {% endif %}
+        </p>
+        <a href="/admin/matches/fixture/add/" 
+           class="bg-soccer-green text-white px-6 py-3 rounded-lg hover:bg-soccer-dark transition-colors inline-flex items-center">
+            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Add First Fixture
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

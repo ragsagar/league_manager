@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Match Details - League Manager{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Match Details</h1>
+        <p class="text-gray-600 mt-2">{{ match.fixture.team1.name }} vs {{ match.fixture.team2.name }}</p>
+    </div>
+    <div class="flex space-x-3">
+        <a href="{% url 'matches:fixtures' %}" 
+           class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+            <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Fixtures
+        </a>
+        <a href="/admin/matches/matchresult/{{ match.id }}/change/" 
+           class="bg-soccer-green text-white px-4 py-2 rounded-lg hover:bg-soccer-dark transition-colors">
+            <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Edit Result
+        </a>
+    </div>
+</div>
+
+<!-- Match Header -->
+<div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+    <div class="bg-gradient-to-r from-soccer-green to-soccer-dark text-white px-6 py-4">
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-xl font-bold">{{ match.fixture.team1.name }} vs {{ match.fixture.team2.name }}</h2>
+                <p class="text-sm opacity-90">
+                    📅 {{ match.fixture.date|date:"F d, Y" }} at {{ match.fixture.date|date:"H:i" }} • 
+                    📍 {{ match.fixture.venue }}
+                </p>
+            </div>
+            <div class="text-right">
+                <div class="text-3xl font-bold">
+                    {{ match.home_goals }} - {{ match.away_goals }}
+                </div>
+                {% if match.winner %}
+                    <div class="text-sm text-yellow-300">Winner: {{ match.winner.name }}</div>
+                {% else %}
+                    <div class="text-sm text-yellow-300">Draw</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Match Details Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Score Card -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Final Score</h3>
+        <div class="grid grid-cols-2 gap-6">
+            <!-- Home Team -->
+            <div class="text-center">
+                <div class="mb-4">
+                    {% if match.fixture.team1.logo %}
+                        <img class="h-16 w-16 mx-auto rounded-full object-cover" 
+                             src="{{ match.fixture.team1.logo.url }}" 
+                             alt="{{ match.fixture.team1.name }}">
+                    {% else %}
+                        <div class="h-16 w-16 bg-soccer-green rounded-full mx-auto flex items-center justify-center">
+                            <span class="text-white text-xl font-bold">{{ match.fixture.team1.name|first }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <h4 class="text-lg font-semibold">{{ match.fixture.team1.name }}</h4>
+                <div class="text-3xl font-bold text-soccer-green mt-2">{{ match.team1_goals }}</div>
+                {% if match.fixture.team1 == match.winner %}
+                    <div class="text-sm text-gold mt-2">🏆 Winner</div>
+                {% endif %}
+            </div>
+            
+            <!-- Away Team -->
+            <div class="text-center">
+                <div class="mb-4">
+                    {% if match.fixture.team2.logo %}
+                        <img class="h-16 w-16 mx-auto rounded-full object-cover" 
+                             src="{{ match.fixture.team2.logo.url }}" 
+                             alt="{{ match.fixture.team2.name }}">
+                    {% else %}
+                        <div class="h-16 w-16 bg-soccer-green rounded-full mx-auto flex items-center justify-center">
+                            <span class="text-white text-xl font-bold">{{ match.fixture.team2.name|first }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <h4 class="text-lg font-semibold">{{ match.fixture.team2.name }}</h4>
+                <div class="text-3xl font-bold text-soccer-green mt-2">{{ match.team2_goals }}</div>
+                {% if match.fixture.team2 == match.winner %}
+                    <div class="text-sm text-gold mt-2">🏆 Winner</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Match Info -->
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <div class="space-y-2 text-sm text-gray-600">
+                <div><strong>Date:</strong> {{ match.fixture.date|date:"F d, Y" }}</div>
+                <div><strong>Time:</strong> {{ match.fixture.date|date:"H:i" }}</div>
+                <div><strong>Venue:</strong> {{ match.fixture.venue }}</div>
+                {% if match.man_of_match %}
+                    <div><strong>Man of the Match:</strong> {{ match.man_of_match.first_name }} {{ match.man_of_match.last_name }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Goals Timeline -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Goals</h3>
+        {% if goals %}
+            <div class="space-y-3">
+                {% for goal in goals %}
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-soccer-green font-bold text-lg">{{ goal.minute }}'</div>
+                        <div>
+                            <div class="font-semibold">{{ goal.scorer.first_name }} {{ goal.scorer.last_name }}</div>
+                            <div class="text-sm text-gray-600">{{ goal.scorer.club.name }}</div>
+                        </div>
+                        {% if goal.penalty %}
+                            <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">P</span>
+                        {% endif %}
+                        {% if goal.own_goal %}
+                            <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">OG</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-gray-500 py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <p>No goals recorded</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Bookings -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+    <!-- Home Team Bookings -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            {{ match.fixture.team1.name }} Bookings
+        </h3>
+        {% with home_bookings=bookings|slice:":0" %}
+            {% for booking in bookings %}
+                {% if booking.player.club == match.fixture.team1 %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="text-gray-600">{{ booking.minute }}'</div>
+                            <div>
+                                <div class="font-semibold">{{ booking.player.first_name }} {{ booking.player.last_name }}</div>
+                            </div>
+                        </div>
+                        <span class="{% if booking.card_type == 'yellow' %}yellow-card{% else %}red-card{% endif %} text-white text-xs px-2 py-1 rounded">
+                            {{ booking.get_card_type_display|upper }}
+                        </span>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <div class="text-center text-gray-500 py-4">No bookings</div>
+            {% endfor %}
+        {% endwith %}
+    </div>
+    
+    <!-- Away Team Bookings -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            {{ match.fixture.team2.name }} Bookings
+        </h3>
+        {% for booking in bookings %}
+            {% if booking.player.club == match.fixture.team2 %}
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-gray-600">{{ booking.minute }}'</div>
+                        <div>
+                            <div class="font-semibold">{{ booking.player.first_name }} {{ booking.player.last_name }}</div>
+                        </div>
+                    </div>
+                    <span class="{% if booking.card_type == 'yellow' %}yellow-card{% else %}red-card{% endif %} text-white text-xs px-2 py-1 rounded">
+                        {{ booking.get_card_type_display|upper }}
+                    </span>
+                </div>
+            {% endif %}
+        {% empty %}
+            <div class="text-center text-gray-500 py-4">No bookings</div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Player Statistics -->
+<div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Match Statistics</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Home Team Stats -->
+        <div>
+            <h4 class="font-semibold text-gray-800 mb-3">{{ match.fixture.team1.name }}</h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span>Goals:</span>
+                    <span class="font-semibold">{{ match.home_goals }}</span>
+                </div>
+                {% with team1_goals_count=0 %}
+                    {% for goal in goals %}
+                        {% if goal.scorer.club == match.fixture.team1 and not goal.own_goal %}
+                            {% with team1_goals_count=team1_goals_count|add:1 %}{% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="flex justify-between">
+                        <span>Goals from Play:</span>
+                        <span class="font-semibold">{{ team1_goals_count }}</span>
+                    </div>
+                {% endwith %}
+            </div>
+        </div>
+        
+        <!-- Away Team Stats -->
+        <div>
+            <h4 class="font-semibold text-gray-800 mb-3">{{ match.fixture.team2.name }}</h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span>Goals:</span>
+                    <span class="font-semibold">{{ match.away_goals }}</span>
+                </div>
+                {% with team2_goals_count=0 %}
+                    {% for goal in goals %}
+                        {% if goal.scorer.club == match.fixture.team2 and not goal.own_goal %}
+                            {% with team2_goals_count=team2_goals_count|add:1 %}{% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="flex justify-between">
+                        <span>Goals from Play:</span>
+                        <span class="font-semibold">{{ team2_goals_count }}</span>
+                    </div>
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

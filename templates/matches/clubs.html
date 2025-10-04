@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Clubs - Wasl Village Premier League Season 3{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">Clubs</h1>
+        <p class="text-gray-600 mt-2">All participating football clubs</p>
+    </div>
+    <a href="/admin/matches/club/add/" 
+       class="bg-soccer-green text-white px-4 py-2 rounded-lg hover:bg-soccer-dark transition-colors">
+        Add Club
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for club in clubs %}
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="bg-gradient-to-r from-soccer-green to-soccer-dark text-white px-6 py-4">
+            <div class="flex items-center space-x-4">
+                {% if club.logo %}
+                    <img class="h-12 w-12 rounded-full object-cover" 
+                         src="{{ club.logo.url }}" 
+                         alt="{{ club.name }}">
+                {% else %}
+                    <div class="h-12 w-12 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-soccer-green font-bold text-lg">{{ club.name|first }}</span>
+                    </div>
+                {% endif %}
+                <div>
+                    <h3 class="text-xl font-bold">{{ club.name }}</h3>
+                    <p class="text-sm opacity-90">{{ club.player_count }} players</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            {% if club.manager_info %}
+                <div class="mb-3">
+                    <span class="text-sm text-gray-600">Manager:</span>
+                    <span class="font-semibold">{{ club.manager_info.first_name }} {{ club.manager_info.last_name }}</span>
+                </div>
+            {% endif %}
+            
+            {% if club.captain_info %}
+                <div class="mb-3">
+                    <span class="text-sm text-gray-600">Captain:</span>
+                    <span class="font-semibold">{{ club.captain_info.first_name }} {{ club.captain_info.last_name }}</span>
+                </div>
+            {% endif %}
+            
+            <div class="pt-4 border-t border-gray-200">
+                <a href="/admin/matches/club/{{ club.id }}/change/" 
+                   class="text-soccer-green hover:text-soccer-dark font-semibold">
+                    Edit Club →
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-3 text-center py-12">
+        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-2m-7 0H9m2 0h2"/>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No clubs found</h3>
+        <p class="text-gray-600 mb-4">Get started by adding your first club</p>
+        <a href="/admin/matches/club/add/" 
+           class="bg-soccer-green text-white px-6 py-3 rounded-lg hover:bg-soccer-dark transition-colors">
+            Add First Club
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
