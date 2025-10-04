@@ -72,9 +72,9 @@ class Fixture(models.Model):
 class MatchResult(models.Model):
     """Represents the result of a completed match"""
     fixture = models.OneToOneField(Fixture, on_delete=models.CASCADE, related_name='result')
-    team1_goals = models.PositiveIntegerField(default=0)
-    team2_goals = models.PositiveIntegerField(default=0)
-    man_of_match = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True)
+    team1_goals = models.PositiveIntegerField(default=0, verbose_name="Team 1 Goals")
+    team2_goals = models.PositiveIntegerField(default=0, verbose_name="Team 2 Goals")
+    man_of_match = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Man of the Match")
     
     class Meta:
         verbose_name = 'Match Result'

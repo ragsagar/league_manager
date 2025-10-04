@@ -8,7 +8,6 @@ urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('table/', views.TableView.as_view(), name='table'),
     path('fixtures/', views.FixtureListView.as_view(), name='fixtures'),
-    path('results/entry/<int:fixture_id>/', views.ResultEntryView.as_view(), name='result_entry'),
     path('match/<int:pk>/', views.MatchDetailView.as_view(), name='match_detail'),
     path('clubs/', views.ClubListView.as_view(), name='clubs'),
     path('players/list/', views.PlayerListView.as_view(), name='players'),

@@ -134,8 +134,8 @@
                                     View Details
                                 </a>
                             {% else %}
-                                <a href="{% url 'matches:result_entry' fixture.id %}" 
-                                   class="bg-soccer-green text-white px-4 py-2 text-sm rounded-lg hover:bg-soccer-dark transition-colors">
+                                <a href="/admin/matches/matchresult/add/?fixture={{ fixture.id }}" 
+                                   class="bg-primary-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-primary-600 transition-colors">
                                     Enter Result
                                 </a>
                             {% endif %}

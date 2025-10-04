@@ -117,6 +117,39 @@ class MatchResultAdmin(admin.ModelAdmin):
         if obj:  # editing an existing object
             return ['fixture']  # Make fixture read-only after creation
         return []
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        
+        # Customize form for new instances with fixture parameter
+        if not obj and request.GET.get('fixture'):
+            fixture_id = request.GET.get('fixture')
+            try:
+                fixture = Fixture.objects.get(id=fixture_id)
+                team1_name = fixture.team1.name
+                team2_name = fixture.team2.name
+                
+                # Update field labels
+                form.base_fields['team1_goals'].label = f"{team1_name} Goals"
+                form.base_fields['team1_goals'].help_text = f"Number of goals scored by {team1_name}"
+                form.base_fields['team2_goals'].label = f"{team2_name} Goals"
+                form.base_fields['team2_goals'].help_text = f"Number of goals scored by {team2_name}"
+            except Fixture.DoesNotExist:
+                pass
+        
+        return form
+    
+    def save_model(self, request, obj, form, change):
+        # If creating new result and fixture is not set, get it from URL
+        if not change and not obj.fixture_id:
+            fixture_id = request.GET.get('fixture')
+            if fixture_id:
+                try:
+                    obj.fixture = Fixture.objects.get(id=fixture_id)
+                except Fixture.DoesNotExist:
+                    pass
+        
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(Booking)
@@ -164,6 +197,6 @@ class GoalAdmin(admin.ModelAdmin):
 
 
 # Customize admin site
-admin.site.site_header = "League Manager Administration"
-admin.site.site_title = "League Manager Admin"
-admin.site.index_title = "Welcome to League Manager Admin"
+admin.site.site_header = "Wasl Village Premier League Administration"
+admin.site.site_title = "WVPL Admin"
+admin.site.index_title = "Welcome to Wasl Village Premier League Season 3 Admin"

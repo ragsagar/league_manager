@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Club, Player, Fixture, MatchResult, Booking, Goal
 from .forms import (
-    FixtureForm, MatchResultForm, DynamicMatchResultForm, GoalFormSet, BookingFormSet, 
+    FixtureForm, MatchResultForm, DynamicMatchResultForm, 
     ClubForm, PlayerForm
 )
 from .utils import calculate_table, get_recent_form, get_club_statistics
@@ -28,7 +28,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Get latest fixtures (only those without results)
+        # Get upcoming fixtures (only those without results) in chronological order
         upcoming_fixtures = Fixture.objects.filter(
             date__gte=timezone.now()
         ).exclude(
@@ -97,21 +97,45 @@ class FixtureListView(ListView):
     def get_queryset(self):
         queryset = Fixture.objects.select_related(
             'team1', 'team2', 'result'
-        ).order_by('-date')
+        )
         
         # Filter by if it's upcoming or past
         date_filter = self.request.GET.get('filter')
         if date_filter == 'upcoming':
-            queryset = queryset.filter(date__gte=timezone.now()).exclude(result__isnull=False)
+            # Show upcoming fixtures in chronological order (earliest first)
+            queryset = queryset.filter(date__gte=timezone.now()).exclude(result__isnull=False).order_by('date')
         elif date_filter == 'past':
-            queryset = queryset.filter(date__lt=timezone.now())
+            # Show past fixtures in reverse chronological order (most recent first)
+            queryset = queryset.filter(date__lt=timezone.now()).order_by('-date')
+        else:
+            # Default: show upcoming fixtures first (chronological), then past fixtures (reverse chronological)
+            # We'll handle this in the template by separating upcoming and past fixtures
+            queryset = queryset.order_by('date')
         
         return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Get separate querysets for upcoming and past fixtures
+        now = timezone.now()
+        
+        # Upcoming fixtures (chronological order - earliest first)
+        upcoming_fixtures = Fixture.objects.filter(
+            date__gte=now
+        ).exclude(
+            result__isnull=False
+        ).select_related('team1', 'team2').order_by('date')
+        
+        # Past fixtures (reverse chronological order - most recent first)
+        past_fixtures = Fixture.objects.filter(
+            date__lt=now
+        ).select_related('team1', 'team2', 'result').order_by('-date')
+        
         context.update({
             'filter': self.request.GET.get('filter', 'all'),
+            'upcoming_fixtures': upcoming_fixtures,
+            'past_fixtures': past_fixtures,
         })
         return context
 
@@ -185,112 +209,6 @@ class LoginPageView(LoginView):
     
     def get_success_url(self):
         return '/'
-
-
-class ResultEntryView(LoginRequiredMixin, CreateView):
-    """Enhanced dynamic form for entering match results, goals, and bookings"""
-    model = MatchResult
-    form_class = DynamicMatchResultForm
-    template_name = 'matches/dynamic_result_entry.html'
-    
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        fixture_id = self.kwargs.get('fixture_id')
-        try:
-            fixture = Fixture.objects.get(id=fixture_id)
-            kwargs['fixture'] = fixture
-        except Fixture.DoesNotExist:
-            pass
-        return kwargs
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        fixture_id = self.kwargs.get('fixture_id')
-        
-        try:
-            fixture = get_object_or_404(Fixture, id=fixture_id)
-        except Fixture.DoesNotExist:
-            messages.error(self.request, "Fixture not found.")
-            return redirect('matches:fixtures')
-        
-        # Check if result already exists
-        if hasattr(fixture, 'result'):
-            messages.warning(self.request, "This fixture already has a result.")
-            return redirect('matches:match_detail', pk=fixture.result.id)
-        
-        # Get players for both teams to filter formsets
-        from django.db.models import Q
-        all_fixture_players = Player.objects.filter(
-            Q(club=fixture.team1) | Q(club=fixture.team2)
-        ).order_by('first_name', 'last_name')
-        
-        # Initialize formsets
-        if self.request.method == 'POST':
-            goal_formset = GoalFormSet(
-                self.request.POST,
-                prefix='goals'
-            )
-            booking_formset = BookingFormSet(
-                self.request.POST,
-                prefix='bookings'
-            )
-        else:
-            goal_formset = GoalFormSet(prefix='goals')
-            booking_formset = BookingFormSet(prefix='bookings')
-        
-        # Update player choices for all forms in the formsets
-        for form in goal_formset:
-            if hasattr(form, 'fields') and 'scorer' in form.fields:
-                form.fields['scorer'].queryset = all_fixture_players
-        
-        for form in booking_formset:
-            if hasattr(form, 'fields') and 'player' in form.fields:
-                form.fields['player'].queryset = all_fixture_players
-        
-        context['goal_formset'] = goal_formset
-        context['booking_formset'] = booking_formset
-        
-        context.update({
-            'fixture': fixture,
-            'team1': fixture.team1,
-            'team2': fixture.team2,
-        })
-        return context
-    
-    def form_valid(self, form):
-        fixture_id = self.kwargs.get('fixture_id')
-        fixture = get_object_or_404(Fixture, id=fixture_id)
-        
-        # Assign fixture to the form
-        form.instance.fixture = fixture
-        
-        # Validate formsets
-        goal_formset = GoalFormSet(self.request.POST, prefix='goals')
-        booking_formset = BookingFormSet(self.request.POST, prefix='bookings')
-        
-        if goal_formset.is_valid() and booking_formset.is_valid():
-            # Save match result
-            match_result = form.save()
-            
-            # Save goals and bookings
-            goal_formset.instance = match_result
-            booking_formset.instance = match_result
-            
-            for goal_form in goal_formset.save(commit=False):
-                if goal_form.scorer:  # Only save if scorer is selected
-                    goal_form.match = match_result
-                    goal_form.save()
-            
-            for booking_form in booking_formset.save(commit=False):
-                if booking_form.player:  # Only save if player is selected
-                    booking_form.match = match_result
-                    booking_form.save()
-            
-            messages.success(self.request, f'Match result saved successfully!')
-            return redirect('matches:match_detail', pk=match_result.id)
-        else:
-            messages.error(self.request, "Please correct the errors below.")
-            return self.form_invalid(form)
 
 
 class ClubListView(ListView):

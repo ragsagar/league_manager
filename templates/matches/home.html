@@ -5,81 +5,106 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="bg-gradient-to-r from-soccer-green to-soccer-dark rounded-lg shadow-lg p-8 mb-8">
-    <div class="text-center text-white">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
-            Wasl Village Premier League Season 3 ⚽
-        </h1>
-        <p class="text-xl md:text-2xl mb-8 opacity-90">
-            Season 3 - 2025 | Professional football league management
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{% url 'matches:table' %}" 
-               class="bg-white text-soccer-dark px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                View League Table
-            </a>
-            <a href="{% url 'matches:fixtures' %}" 
-               class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-soccer-dark transition-colors">
-                View Fixtures
-            </a>
+<div class="relative bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-2xl shadow-strong overflow-hidden mb-12">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </div>
+    
+    <div class="relative px-8 py-16 text-center text-white">
+        <div class="max-w-4xl mx-auto">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-accent-400 to-accent-600 rounded-2xl shadow-strong mb-6 animate-bounce-subtle">
+                <span class="text-3xl">⚽</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-display font-bold mb-6 tracking-tight">
+                Wasl Village Premier League
+                <span class="block text-accent-300 text-3xl md:text-4xl mt-2">Season 3 - 2025</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-10 opacity-90 max-w-2xl mx-auto leading-relaxed">
+                Experience the thrill of professional football with live standings, comprehensive statistics, and real-time match updates.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'matches:table' %}" 
+                   class="bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-primary-50 transition-all duration-300 shadow-medium hover:shadow-strong hover:scale-105 flex items-center justify-center group">
+                    <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    View League Table
+                </a>
+                <a href="{% url 'matches:fixtures' %}" 
+                   class="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-medium hover:shadow-strong hover:scale-105 flex items-center justify-center group">
+                    <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    View Fixtures
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Quick Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+    <div class="bg-white rounded-2xl shadow-soft p-6 border-l-4 border-primary-500 hover:shadow-medium transition-all duration-300 hover:scale-105">
         <div class="flex items-center">
             <div class="flex-shrink-0">
-                <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.196-2.121M17 20H7m10 0v-2c0-4.4-3.6-8-8-8s-8 3.6-8 8v2h16z"/>
-                </svg>
+                <div class="w-12 h-12 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl flex items-center justify-center">
+                    <svg class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.196-2.121M17 20H7m10 0v-2c0-4.4-3.6-8-8-8s-8 3.6-8 8v2h16z"/>
+                    </svg>
+                </div>
             </div>
             <div class="ml-4">
-                <h3 class="text-lg font-semibold text-gray-900">Total Clubs</h3>
-                <p class="text-3xl font-bold text-blue-600">{{ total_clubs }}</p>
+                <h3 class="text-lg font-semibold text-secondary-700">Total Clubs</h3>
+                <p class="text-3xl font-bold text-primary-600">{{ total_clubs }}</p>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-lg shadow-md p-6 border-l-3 border-green-500">
+    <div class="bg-white rounded-2xl shadow-soft p-6 border-l-4 border-success-500 hover:shadow-medium transition-all duration-300 hover:scale-105">
         <div class="flex items-center">
             <div class="flex-shrink-0">
-                <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
+                <div class="w-12 h-12 bg-gradient-to-br from-success-100 to-success-200 rounded-xl flex items-center justify-center">
+                    <svg class="h-6 w-6 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
             </div>
             <div class="ml-4">
-                <h3 class="text-lg font-semibold text-gray-900">Matches Played</h3>
-                <p class="text-3xl font-bold text-green-600">{{ total_matches_played }}</p>
+                <h3 class="text-lg font-semibold text-secondary-700">Matches Played</h3>
+                <p class="text-3xl font-bold text-success-600">{{ total_matches_played }}</p>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+    <div class="bg-white rounded-2xl shadow-soft p-6 border-l-4 border-accent-500 hover:shadow-medium transition-all duration-300 hover:scale-105">
         <div class="flex items-center">
             <div class="flex-shrink-0">
-                <svg class="h-8 w-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
+                <div class="w-12 h-12 bg-gradient-to-br from-accent-100 to-accent-200 rounded-xl flex items-center justify-center">
+                    <svg class="h-6 w-6 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
             </div>
             <div class="ml-4">
-                <h3 class="text-lg font-semibold text-gray-900">Goals Scored</h3>
-                <p class="text-3xl font-bold text-yellow-600">{{ total_goals_scored }}</p>
+                <h3 class="text-lg font-semibold text-secondary-700">Goals Scored</h3>
+                <p class="text-3xl font-bold text-accent-600">{{ total_goals_scored }}</p>
             </div>
         </div>
     </div>
     
-    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+    <div class="bg-white rounded-2xl shadow-soft p-6 border-l-4 border-secondary-500 hover:shadow-medium transition-all duration-300 hover:scale-105">
         <div class="flex items-center">
             <div class="flex-shrink-0">
-                <svg class="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                <div class="w-12 h-12 bg-gradient-to-br from-secondary-100 to-secondary-200 rounded-xl flex items-center justify-center">
+                    <svg class="h-6 w-6 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
             </div>
             <div class="ml-4">
-                <h3 class="text-lg font-semibold text-gray-900">Season Progress</h3>
-                <p class="text-3xl font-bold text-purple-600">{{ season_progress }}%</p>
+                <h3 class="text-lg font-semibold text-secondary-700">Season Progress</h3>
+                <p class="text-3xl font-bold text-secondary-600">{{ season_progress }}%</p>
             </div>
         </div>
     </div>
