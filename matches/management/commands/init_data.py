@@ -39,31 +39,31 @@ class Command(BaseCommand):
             {
                 'name': 'Time & Cost',
                 'players': [
-                    {'name': 'Rasheed', 'position': 'MID'},
+                    {'name': 'Rasheed', 'position': 'DEF'},
                     {'name': 'Midhul', 'position': 'DEF'},
-                    {'name': 'Ravi', 'position': 'DEF'},
+                    {'name': 'Ravi', 'position': 'GK'},
                     {'name': 'Raees', 'position': 'MID'},
-                    {'name': 'Naheem', 'position': 'MID'},
-                    {'name': 'Jabbar', 'position': 'MID'},
+                    {'name': 'Naheem', 'position': 'FWD'},
+                    {'name': 'Jabbar', 'position': 'FWD'},
                     {'name': 'Sukesh', 'position': 'MID'},
                     {'name': 'Jabir', 'position': 'FWD'},
                     {'name': 'Saif', 'position': 'FWD'},
-                    {'name': 'Sharaz', 'position': 'FWD'}
+                    {'name': 'Sharaz', 'position': 'DEF'}
                 ]
             },
             {
                 'name': 'Wehbe Warriors',
                 'players': [
-                    {'name': 'Husaif', 'position': 'MID'},
+                    {'name': 'Husaif', 'position': 'DEF'},
                     {'name': 'Murthusha', 'position': 'DEF'},
-                    {'name': 'Aneesh', 'position': 'DEF'},
-                    {'name': 'Fasalu', 'position': 'MID'},
-                    {'name': 'Azeem', 'position': 'MID'},
-                    {'name': 'Ajesh', 'position': 'MID'},
-                    {'name': 'Shafeeq', 'position': 'MID'},
+                    {'name': 'Aneesh', 'position': 'MID'},
+                    {'name': 'Fasalu', 'position': 'DEF'},
+                    {'name': 'Azeem', 'position': 'GK'},
+                    {'name': 'Ajesh', 'position': 'DEF'},
+                    {'name': 'Shafeeq', 'position': 'FWD'},
                     {'name': 'Stebin', 'position': 'FWD'},
                     {'name': 'Aju', 'position': 'FWD'},
-                    {'name': 'Sahad', 'position': 'FWD'}
+                    {'name': 'Sahad', 'position': 'DEF'}
                 ]
             },
             {
@@ -71,13 +71,13 @@ class Command(BaseCommand):
                 'players': [
                     {'name': 'Vinod', 'position': 'MID'},
                     {'name': 'Nahas', 'position': 'DEF'},
-                    {'name': 'Sreejith', 'position': 'DEF'},
-                    {'name': 'Sinto', 'position': 'MID'},
+                    {'name': 'Sreejith', 'position': 'FWD'},
+                    {'name': 'Sinto', 'position': 'GK'},
                     {'name': 'Unni', 'position': 'MID'},
-                    {'name': 'Jojo', 'position': 'MID'},
+                    {'name': 'Jojo', 'position': 'DEF'},
                     {'name': 'Sajir', 'position': 'MID'},
                     {'name': 'Jaasim', 'position': 'FWD'},
-                    {'name': 'Ramees CP', 'position': 'FWD'},
+                    {'name': 'Ramees CP', 'position': 'GK'},
                     {'name': 'Lazar', 'position': 'FWD'}
                 ]
             },
@@ -85,15 +85,15 @@ class Command(BaseCommand):
                 'name': 'Arabzone Tigers',
                 'players': [
                     {'name': 'Kaseer', 'position': 'MID'},
-                    {'name': 'Iqbal', 'position': 'DEF'},
+                    {'name': 'Iqbal', 'position': 'FWD'},
                     {'name': 'Saddam', 'position': 'DEF'},
                     {'name': 'Dibbu', 'position': 'MID'},
-                    {'name': 'Vinod Kumar', 'position': 'MID'},
-                    {'name': 'Sagar', 'position': 'MID'},
-                    {'name': 'Gidhin', 'position': 'MID'},
-                    {'name': 'Ramize', 'position': 'FWD'},
-                    {'name': 'Sharad', 'position': 'FWD'},
-                    {'name': 'Delwin', 'position': 'FWD'}
+                    {'name': 'Vinod Kumar', 'position': 'DEF'},
+                    {'name': 'Sagar', 'position': 'DEF'},
+                    {'name': 'Gidhin', 'position': 'GK'},
+                    {'name': 'Ramize', 'position': 'MID'},
+                    {'name': 'Sharad', 'position': 'DEF'},
+                    {'name': 'Delwin', 'position': 'MID'}
                 ]
             }
         ]
@@ -158,7 +158,7 @@ class Command(BaseCommand):
             {
                 'match_no': 2,
                 'date': '2025-10-05', 
-                'time': '07:00',
+                'time': '06:45',
                 'team1': 'Team Kaseer',
                 'team2': 'Team Vinod'
             },
@@ -172,7 +172,7 @@ class Command(BaseCommand):
             {
                 'match_no': 4,
                 'date': '2025-10-12',
-                'time': '07:00',
+                'time': '06:45',
                 'team1': 'Team Husaif',
                 'team2': 'Team Kaseer'
             },
@@ -186,7 +186,7 @@ class Command(BaseCommand):
             {
                 'match_no': 6,
                 'date': '2025-10-19',
-                'time': '07:00',
+                'time': '06:45',
                 'team1': 'Team Kaseer',
                 'team2': 'Team Rasheed'
             },
@@ -200,7 +200,7 @@ class Command(BaseCommand):
             {
                 'match_no': 8,
                 'date': '2025-11-02',
-                'time': '07:00',
+                'time': '06:45',
                 'team1': 'Team Husaif',
                 'team2': 'Team Rasheed'
             }
@@ -243,7 +243,7 @@ class Command(BaseCommand):
                 team1=team1,
                 team2=team2,
                 date=match_datetime,
-                venue="Wasl Village Stadium"
+                venue="Talented Sports Academy, Qusais"
             )
             
             self.stdout.write(
