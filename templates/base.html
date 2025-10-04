@@ -82,15 +82,7 @@
                        class="text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors">
                         Login
                     </a>
-                    <a href="{% url 'matches:register' %}" 
-                       class="bg-white hover:bg-gray-100 text-blue-600 px-3 py-2 rounded-md transition-colors">
-                        Register
-                    </a>
                     {% endif %}
-                    <a href="/admin/" 
-                       class="text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors">
-                        Admin
-                    </a>
                 </div>
                 
                 <!-- Mobile menu button -->
@@ -117,9 +109,7 @@
                 <a href="{% url 'matches:logout' %}" class="text-white block px-3 py-2 rounded-md">Logout ({{ user.username }})</a>
                 {% else %}
                 <a href="{% url 'matches:login' %}" class="text-white block px-3 py-2 rounded-md">Login</a>
-                <a href="{% url 'matches:register' %}" class="text-white block px-3 py-2 rounded-md">Register</a>
                 {% endif %}
-                <a href="/admin/" class="text-white block px-3 py-2 rounded-md">Admin</a>
             </div>
         </div>
     </nav>
@@ -188,7 +178,6 @@
                         <li><a href="{% url 'matches:table' %}" class="hover:text-white transition-colors">League Table</a></li>
                         <li><a href="{% url 'matches:fixtures' %}" class="hover:text-white transition-colors">Upcoming Fixtures</a></li>
                         <li><a href="{% url 'matches:statistics' %}" class="hover:text-white transition-colors">Statistics</a></li>
-                        <li><a href="/admin/" class="hover:text-white transition-colors">Admin Panel</a></li>
                     </ul>
                 </div>
                 <div>

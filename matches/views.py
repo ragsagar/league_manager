@@ -16,7 +16,7 @@ import json
 from .models import Club, Player, Fixture, MatchResult, Booking, Goal
 from .forms import (
     FixtureForm, MatchResultForm, DynamicMatchResultForm, GoalFormSet, BookingFormSet, 
-    ClubForm, PlayerForm, UserRegistrationForm
+    ClubForm, PlayerForm
 )
 from .utils import calculate_table, get_recent_form, get_club_statistics
 
@@ -185,18 +185,6 @@ class LoginPageView(LoginView):
     
     def get_success_url(self):
         return '/'
-
-
-class RegisterView(CreateView):
-    """User registration view"""
-    model = User
-    form_class = UserRegistrationForm
-    template_name = 'matches/register.html'
-    success_url = '/login/'
-    
-    def form_valid(self, form):
-        messages.success(self.request, 'Account created successfully! Please log in.')
-        return super().form_valid(form)
 
 
 class ResultEntryView(LoginRequiredMixin, CreateView):

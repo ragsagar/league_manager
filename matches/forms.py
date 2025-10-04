@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Submit, HTML, Fieldset, Div
@@ -411,45 +410,3 @@ class PlayerForm(forms.ModelForm):
             ),
             Submit('submit', 'Save Player', css_class='btn btn-primary btn-lg')
         )
-
-
-class UserRegistrationForm(UserCreationForm):
-    """Enhanced user registration form"""
-    
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
-    
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.layout = Layout(
-            Fieldset(
-                'Create Account',
-                Row(
-                    Column('username', css_class='form-group col-md-6 mb-3'),
-                    Column('email', css_class='form-group col-md-6 mb-3'),
-                ),
-                Row(
-                    Column('first_name', css_class='form-group col-md-6 mb-3'),
-                    Column('last_name', css_class='form-group col-md-6 mb-3'),
-                ),
-                Row(
-                    Column('password1', css_class='form-group col-md-6 mb-3'),
-                    Column('password2', css_class='form-group col-md-6 mb-3'),
-                ),
-            ),
-            Submit('submit', 'Register', css_class='btn btn-primary btn-lg')
-        )
-    
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-        return user

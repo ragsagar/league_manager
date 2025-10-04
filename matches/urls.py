@@ -17,7 +17,6 @@ urlpatterns = [
     # Authentication URLs
     path('login/', views.LoginPageView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('register/', views.RegisterView.as_view(), name='register'),
     
     # API endpoints for dynamic forms
     path('api/fixture/<int:fixture_id>/players/', views.get_fixture_players, name='fixture_players_api'),
