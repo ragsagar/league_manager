@@ -35,23 +35,27 @@
                      class="w-24 h-24 object-contain drop-shadow-lg hover:rotate-12 transition-transform duration-300">
             </div>
             
-            <!-- Main Title with Enhanced Typography -->
+            <!-- Main Title with Enhanced Typography and Slide-in Animation -->
             <h1 class="text-6xl md:text-8xl font-display font-bold mb-8 tracking-tight drop-shadow-2xl">
-                <span class="bg-gradient-to-r from-white via-accent-200 to-white bg-clip-text text-transparent">
+                <span class="bg-gradient-to-r from-white via-accent-200 to-white bg-clip-text text-transparent animate-slide-in-left opacity-0" 
+                      style="animation-delay: 0.3s; animation-fill-mode: forwards;">
                     Wasl Village Premier League
                 </span>
-                <span class="block text-accent-300 text-4xl md:text-5xl mt-4 font-light drop-shadow-xl">
+                <span class="block text-accent-300 text-4xl md:text-5xl mt-4 font-light drop-shadow-xl animate-slide-in-right opacity-0" 
+                      style="animation-delay: 0.6s; animation-fill-mode: forwards;">
                     Season 3 - 2025
                 </span>
             </h1>
             
-            <!-- Subtitle with Better Contrast -->
-            <p class="text-xl md:text-2xl mb-12 opacity-95 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
+            <!-- Subtitle with Better Contrast and Slide-in Animation -->
+            <p class="text-xl md:text-2xl mb-12 opacity-0 max-w-3xl mx-auto leading-relaxed drop-shadow-lg animate-slide-in-up" 
+               style="animation-delay: 0.9s; animation-fill-mode: forwards;">
                 Experience the thrill of professional football with live standings, comprehensive statistics, and real-time match updates.
             </p>
             
-            <!-- Enhanced Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+            <!-- Enhanced Action Buttons with Slide-in Animation -->
+            <div class="flex flex-col sm:flex-row gap-6 justify-center opacity-0 animate-slide-in-up" 
+                 style="animation-delay: 1.2s; animation-fill-mode: forwards;">
                 <a href="{% url 'matches:table' %}" 
                    class="bg-white/95 backdrop-blur-sm text-primary-700 px-10 py-5 rounded-2xl font-semibold hover:bg-white transition-all duration-300 shadow-strong hover:shadow-xl hover:scale-105 hover:-translate-y-1 flex items-center justify-center group border border-white/20">
                     <svg class="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
