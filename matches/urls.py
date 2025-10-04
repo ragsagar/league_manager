@@ -21,4 +21,5 @@ urlpatterns = [
     path('api/fixture/<int:fixture_id>/players/', views.get_fixture_players, name='fixture_players_api'),
     path('api/club/<int:club_id>/players/', views.get_club_players, name='club_players_api'),
     path('api/validate-form/', views.validate_form_data, name='validate_form_api'),
+    
 ]

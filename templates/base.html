@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Wasl Village Premier League Season 3{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logos/favicon.png' %}">
+    <link rel="alternate icon" href="{% static 'images/logos/favicon.png' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -117,8 +120,10 @@
                 <!-- Logo and Brand -->
                 <div class="flex items-center">
                     <a href="{% url 'matches:home' %}" class="flex items-center space-x-3 group">
-                        <div class="w-10 h-10 bg-gradient-to-br from-accent-400 to-accent-600 rounded-xl flex items-center justify-center shadow-medium group-hover:shadow-strong transition-all duration-300 group-hover:scale-105">
-                            <span class="text-white text-xl font-bold">⚽</span>
+                        <div class="w-12 h-12 rounded-xl overflow-hidden shadow-medium group-hover:shadow-strong transition-all duration-300 group-hover:scale-105">
+                            <img src="{% static 'matches/images/logos/wvpl-logo.png' %}" 
+                                 alt="Wasl Village Premier League Logo" 
+                                 class="w-full h-full object-contain">
                         </div>
                         <div class="hidden sm:block">
                             <span class="text-white text-xl font-display font-bold tracking-tight">Wasl Village Premier League</span>
