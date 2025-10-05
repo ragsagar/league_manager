@@ -6,3 +6,10 @@ workers = multiprocessing.cpu_count() * 2 + 1
 worker_class = "gthread"
 threads = 2
 timeout = 60
+
+# Production-specific settings
+wsgi_module = "league_manager.wsgi_prod:application"
+max_requests = 1000
+max_requests_jitter = 50
+preload_app = True
+keepalive = 2

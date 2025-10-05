@@ -1,5 +1,6 @@
 asgiref==3.9.2
 crispy-tailwind==1.0.3
+decouple==0.0.7
 Django==5.2.7
 django-crispy-forms==2.4
 gunicorn==23.0.0
